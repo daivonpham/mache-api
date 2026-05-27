@@ -1,11 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager, EntityTarget, ObjectLiteral, Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import {
+  DataSource,
+  EntityManager,
+  EntityTarget,
+  ObjectLiteral,
+  Repository,
+} from "typeorm";
 
 @Injectable()
 export class DatabaseService {
   constructor(private readonly dataSource: DataSource) {}
 
-  getRepository<Entity extends ObjectLiteral>(entity: EntityTarget<Entity>): Repository<Entity> {
+  getRepository<Entity extends ObjectLiteral>(
+    entity: EntityTarget<Entity>,
+  ): Repository<Entity> {
     return this.dataSource.getRepository(entity);
   }
 
@@ -22,6 +30,3 @@ export class DatabaseService {
     return entityManager.getRepository(entity);
   }
 }
-
-
-

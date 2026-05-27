@@ -1,9 +1,9 @@
-import { GetAllGenericOptions } from 'src/common/constants/interface';
+import { GetAllGenericOptions } from "src/common/constants/interface";
 import {
   getSearchableProperties,
   getSortableProperties,
-} from 'src/common/decorators/entity-meta.decorator';
-import { ObjectLiteral, Repository } from 'typeorm';
+} from "src/common/decorators/entity-meta.decorator";
+import { ObjectLiteral, Repository } from "typeorm";
 
 export class BaseService<Entity extends ObjectLiteral> {
   constructor(protected readonly repository: Repository<Entity>) {}
@@ -92,7 +92,7 @@ export class BaseService<Entity extends ObjectLiteral> {
   //             // relationPath would be something like 'customer', or 'parent__child' for deep relations
   //             const relationPath = parts.slice(0, -1).join('__');
   //             const columnName = parts[parts.length - 1];
-              
+
   //             // Automatically add relation to options.relations if not present
   //             const originalRelationName = parts.slice(0, -1).join('.');
   //             if (!options.relations) {
@@ -101,7 +101,7 @@ export class BaseService<Entity extends ObjectLiteral> {
   //             if (!options.relations.includes(originalRelationName)) {
   //               options.relations.push(originalRelationName);
   //             }
-              
+
   //             return `${relationPath}.${columnName} LIKE :search`;
   //           }
   //           return `${alias}.${prop} LIKE :search`;
@@ -229,12 +229,12 @@ export class BaseService<Entity extends ObjectLiteral> {
     }
 
     const standaloneFilters = [
-      'search',
-      'searchBy',
-      'sortBy',
-      'sort',
-      'fromDate',
-      'toDate',
+      "search",
+      "searchBy",
+      "sortBy",
+      "sort",
+      "fromDate",
+      "toDate",
     ];
     standaloneFilters.forEach((key) => {
       if (options[key as keyof GetAllGenericOptions] !== undefined) {
@@ -249,7 +249,7 @@ export class BaseService<Entity extends ObjectLiteral> {
       options.filter.isDeleted = null;
     }
 
-    const qb = this.repository.createQueryBuilder('alias');
+    const qb = this.repository.createQueryBuilder("alias");
     const alias = qb.alias;
     const entityPrototype = (this.repository.target as Function).prototype;
 
@@ -265,11 +265,11 @@ export class BaseService<Entity extends ObjectLiteral> {
 
     if (options.relations && options.relations.length > 0) {
       options.relations.forEach((relation) => {
-        if (relation.includes('.')) {
-          const parts = relation.split('.');
-          const parentAlias = parts.slice(0, -1).join('__');
+        if (relation.includes(".")) {
+          const parts = relation.split(".");
+          const parentAlias = parts.slice(0, -1).join("__");
           const childProp = parts[parts.length - 1];
-          const childAlias = parts.join('__');
+          const childAlias = parts.join("__");
           qb.leftJoin(`${parentAlias}.${childProp}`, childAlias);
         } else {
           qb.leftJoin(`${alias}.${relation}`, relation);
@@ -279,8 +279,8 @@ export class BaseService<Entity extends ObjectLiteral> {
 
     if (options.count && options.count.length > 0) {
       options.count.forEach((countRel) => {
-        if (countRel.includes('.')) {
-          const parts = countRel.split('.');
+        if (countRel.includes(".")) {
+          const parts = countRel.split(".");
           const childProp = parts.pop();
 
           if (!options.relations) {
@@ -288,41 +288,41 @@ export class BaseService<Entity extends ObjectLiteral> {
           }
 
           for (let i = 0; i < parts.length; i++) {
-            const currentRelation = parts.slice(0, i + 1).join('.');
+            const currentRelation = parts.slice(0, i + 1).join(".");
             if (!options.relations.includes(currentRelation)) {
               options.relations.push(currentRelation);
               if (i === 0) {
                 qb.leftJoin(`${alias}.${parts[0]}`, parts[0]);
               } else {
-                const parentAlias = parts.slice(0, i).join('__');
+                const parentAlias = parts.slice(0, i).join("__");
                 const childPropName = parts[i];
-                const childAlias = parts.slice(0, i + 1).join('__');
+                const childAlias = parts.slice(0, i + 1).join("__");
                 qb.leftJoin(`${parentAlias}.${childPropName}`, childAlias);
               }
             }
           }
 
-          const parentAlias = parts.join('__');
+          const parentAlias = parts.join("__");
           qb.loadRelationCountAndMap(
             `${parentAlias}.${childProp}Count`,
-            `${parentAlias}.${childProp}`
+            `${parentAlias}.${childProp}`,
           );
         } else {
           qb.loadRelationCountAndMap(
             `${alias}.${countRel}Count`,
-            `${alias}.${countRel}`
+            `${alias}.${countRel}`,
           );
         }
       });
     }
 
     Object.entries(actualFilters).forEach(([key, value]) => {
-      if (value === null || value === undefined || value === '') return;
+      if (value === null || value === undefined || value === "") return;
 
-      if (key === 'isDeleted') {
-        if (String(value) === 'true') {
+      if (key === "isDeleted") {
+        if (String(value) === "true") {
           qb.withDeleted().andWhere(`${alias}.deletedAt IS NOT NULL`);
-        } else if (String(value) === 'false') {
+        } else if (String(value) === "false") {
           qb.andWhere(`${alias}.deletedAt IS NULL`);
         }
         return;
@@ -347,8 +347,8 @@ export class BaseService<Entity extends ObjectLiteral> {
       if (searchableProps.length > 0) {
         const whereConditions = searchableProps
           .map((prop) => {
-            if (prop.includes('.')) {
-              const parts = prop.split('.');
+            if (prop.includes(".")) {
+              const parts = prop.split(".");
               const columnName = parts.pop();
 
               if (!options.relations) {
@@ -356,32 +356,32 @@ export class BaseService<Entity extends ObjectLiteral> {
               }
 
               for (let i = 0; i < parts.length; i++) {
-                const currentRelation = parts.slice(0, i + 1).join('.');
+                const currentRelation = parts.slice(0, i + 1).join(".");
                 if (!options.relations.includes(currentRelation)) {
                   options.relations.push(currentRelation);
                   if (i === 0) {
                     qb.leftJoin(`${alias}.${parts[0]}`, parts[0]);
                   } else {
-                    const parentAlias = parts.slice(0, i).join('__');
+                    const parentAlias = parts.slice(0, i).join("__");
                     const childProp = parts[i];
-                    const childAlias = parts.slice(0, i + 1).join('__');
+                    const childAlias = parts.slice(0, i + 1).join("__");
                     qb.leftJoin(`${parentAlias}.${childProp}`, childAlias);
                   }
                 }
               }
 
-              const relationPath = parts.join('__');
+              const relationPath = parts.join("__");
               return `${relationPath}.${columnName} ILIKE :search`;
             }
             return `${alias}.${prop} ILIKE :search`;
           })
-          .join(' OR ');
+          .join(" OR ");
 
         qb.andWhere(`(${whereConditions})`, { search: `%${search}%` });
       }
     }
 
-    const dateCol = options.dateColumn || 'createdAt';
+    const dateCol = options.dateColumn || "createdAt";
     if (fromDate && toDate) {
       qb.andWhere(
         `${alias}.${dateCol} BETWEEN :fromDate::timestamptz AND :toDate::timestamptz`,
@@ -401,16 +401,16 @@ export class BaseService<Entity extends ObjectLiteral> {
         sortableProps.length === 0 || sortableProps.includes(sortBy);
 
       if (isValidSort) {
-        const order = sort?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+        const order = sort?.toUpperCase() === "DESC" ? "DESC" : "ASC";
         qb.orderBy(`${alias}.${sortBy}`, order);
       }
     } else {
-      qb.orderBy(`${alias}.createdAt`, 'DESC');
+      qb.orderBy(`${alias}.createdAt`, "DESC");
     }
 
     const relationAliases = new Set(
       (options.relations || []).map((r) =>
-        r.includes('.') ? r.split('.').join('__') : r,
+        r.includes(".") ? r.split(".").join("__") : r,
       ),
     );
 
@@ -422,10 +422,10 @@ export class BaseService<Entity extends ObjectLiteral> {
             !relationAliases.has(field),
         )
         .map((field) => {
-          if (field.includes('.')) {
-            const parts = field.split('.');
+          if (field.includes(".")) {
+            const parts = field.split(".");
             const columnName = parts.pop();
-            const relationPath = parts.join('__');
+            const relationPath = parts.join("__");
             return `${relationPath}.${columnName}`;
           }
           return `${alias}.${field}`;
@@ -433,8 +433,8 @@ export class BaseService<Entity extends ObjectLiteral> {
       qb.select(selects);
 
       (options.relations || []).forEach((relation) => {
-        const relAlias = relation.includes('.')
-          ? relation.split('.').join('__')
+        const relAlias = relation.includes(".")
+          ? relation.split(".").join("__")
           : relation;
         if (
           options.select!.includes(relation) ||

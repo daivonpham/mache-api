@@ -1,10 +1,10 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsOptional } from 'class-validator';
-import { ToNumber } from '../decorators/transform.decorator';
+import { ApiPropertyOptional } from "@nestjs/swagger";
+import { IsDateString, IsEnum, IsOptional } from "class-validator";
+import { ToNumber } from "../decorators/transform.decorator";
 
 export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
+  ASC = "ASC",
+  DESC = "DESC",
 }
 export interface GetAllGenericOptions {
   search?: string;
@@ -23,11 +23,11 @@ export interface GetAllGenericOptions {
 }
 
 export class QueryBaseDto {
-  @ApiPropertyOptional({ example: 'search term' })
+  @ApiPropertyOptional({ example: "search term" })
   @IsOptional()
   search?: string;
 
-  @ApiPropertyOptional({ example: 'createdAt' })
+  @ApiPropertyOptional({ example: "createdAt" })
   @IsOptional()
   sortBy?: string;
 
@@ -38,8 +38,8 @@ export class QueryBaseDto {
 
   @ApiPropertyOptional({
     type: String,
-    format: 'date-time',
-    example: '2024-01-01T00:00:00Z',
+    format: "date-time",
+    example: "2024-01-01T00:00:00Z",
   })
   @IsOptional()
   @IsDateString()
@@ -47,8 +47,8 @@ export class QueryBaseDto {
 
   @ApiPropertyOptional({
     type: String,
-    format: 'date-time',
-    example: '2024-12-31T23:59:59Z',
+    format: "date-time",
+    example: "2024-12-31T23:59:59Z",
   })
   @IsOptional()
   @IsDateString()

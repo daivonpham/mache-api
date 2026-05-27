@@ -1,10 +1,10 @@
 export default () => ({
-  env: process.env.NODE_ENV || 'development',
-  host: process.env.HOST || 'localhost',
-  port: parseInt(process.env.PORT || '3000', 10),
+  env: process.env.NODE_ENV || "development",
+  host: process.env.HOST || "localhost",
+  port: parseInt(process.env.PORT || "3000", 10),
   database: {
     host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '3306', 10),
+    port: parseInt(process.env.DB_PORT || "5432", 10),
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     name: process.env.DB_NAME,
@@ -15,9 +15,9 @@ export default () => ({
     expiresIn: process.env.JWT_EXPIRES_IN,
   },
   swagger: {
-    title: process.env.SWAGGER_TITLE || 'NestJS API',
+    title: process.env.SWAGGER_TITLE || "NestJS API",
     description:
-      process.env.SWAGGER_DESCRIPTION || 'NestJS Swagger Documentation',
-    version: process.env.SWAGGER_VERSION || '1.0',
+      process.env.SWAGGER_DESCRIPTION || "NestJS Swagger Documentation",
+    version: process.env.SWAGGER_VERSION || "1.0",
   },
 });

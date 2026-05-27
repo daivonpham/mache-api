@@ -1,1 +1,1 @@
-export * from '@modules/user/user.module';
+export * from "@modules/user/user.module";

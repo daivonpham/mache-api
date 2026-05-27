@@ -5,9 +5,9 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ApiResponse } from '../constants/interface';
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { ApiResponse } from "../constants/interface";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -24,15 +24,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const exceptionResponse =
       exception instanceof HttpException
         ? exception.getResponse()
-        : 'Internal server error';
+        : "Internal server error";
 
     const message =
-      typeof exceptionResponse === 'string'
+      typeof exceptionResponse === "string"
         ? exceptionResponse
-        : ((exceptionResponse as any)?.message ?? 'Something went wrong');
+        : ((exceptionResponse as any)?.message ?? "Something went wrong");
 
     const errors =
-      typeof exceptionResponse === 'object' &&
+      typeof exceptionResponse === "object" &&
       (exceptionResponse as any)?.message &&
       Array.isArray((exceptionResponse as any).message)
         ? (exceptionResponse as any).message
@@ -41,7 +41,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const body: ApiResponse = {
       success: false,
       statusCode: status,
-      message: Array.isArray(message) ? 'Validation failed' : message,
+      message: Array.isArray(message) ? "Validation failed" : message,
       errors,
       timestamp: new Date().toISOString(),
       path: request.url,

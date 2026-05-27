@@ -3,11 +3,11 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Request } from 'express';
-import { ApiResponse } from '../constants/interface';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { Request } from "express";
+import { ApiResponse } from "../constants/interface";
 
 @Injectable()
 export class ResponseTransformInterceptor<T> implements NestInterceptor<
@@ -26,7 +26,7 @@ export class ResponseTransformInterceptor<T> implements NestInterceptor<
       map((data) => ({
         success: true,
         statusCode: response.statusCode,
-        message: data?.message ?? 'Success',
+        message: data?.message ?? "Success",
         data: data?.data !== undefined ? data.data : data,
         metadata: data?.metadata,
         timestamp: new Date().toISOString(),

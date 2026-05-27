@@ -1,20 +1,20 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { ResponseTransformInterceptor } from './common/interceptors/response-transform.interceptor';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
+import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
+import { ResponseTransformInterceptor } from "./common/interceptors/response-transform.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  process.on('uncaughtException', (err) => {
-    console.error('❌ Uncaught Exception:', err);
+  process.on("uncaughtException", (err) => {
+    console.error("❌ Uncaught Exception:", err);
   });
 
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
   });
 
   const configService = app.get(ConfigService);
@@ -51,10 +51,10 @@ async function bootstrap() {
     version: string;
   }
 
-  const swaggerConfigData = configService.get<SwaggerConfig>('swagger') || {
-    title: 'NestJS API',
-    description: 'NestJS Swagger Documentation',
-    version: '1.0',
+  const swaggerConfigData = configService.get<SwaggerConfig>("swagger") || {
+    title: "NestJS API",
+    description: "NestJS Swagger Documentation",
+    version: "1.0",
   };
 
   const config = new DocumentBuilder()
@@ -63,26 +63,26 @@ async function bootstrap() {
     .setVersion(swaggerConfigData.version)
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        name: "JWT",
+        description: "Enter JWT token",
+        in: "header",
       },
-      'JWT-auth',
+      "JWT-auth",
     )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document, {
+  SwaggerModule.setup("docs", app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },
   });
 
-  const port = configService.get<number>('port', 3000);
-  const host = configService.get<string>('host', 'localhost');
+  const port = configService.get<number>("port", 3000);
+  const host = configService.get<string>("host", "localhost");
   await app.listen(port, host);
   console.log(`Application is running on: http://${host}:${port}/docs`);
 }

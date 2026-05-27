@@ -1,7 +1,7 @@
-import 'reflect-metadata';
+import "reflect-metadata";
 
-export const SEARCHABLE_KEY = 'custom:searchable';
-export const SORTABLE_KEY = 'custom:sortable';
+export const SEARCHABLE_KEY = "custom:searchable";
+export const SORTABLE_KEY = "custom:sortable";
 
 /**
  * Đánh dấu một thuộc tính trong Entity có thể được dùng để tìm kiếm (LIKE %search%)
@@ -10,7 +10,7 @@ export function Searchable(relationFields?: string[]): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
     const existingSearchableProps =
       Reflect.getOwnMetadata(SEARCHABLE_KEY, target) || [];
-      
+
     if (relationFields && relationFields.length > 0) {
       const relatedProps = relationFields.map(
         (field) => `${String(propertyKey)}.${field}`,
