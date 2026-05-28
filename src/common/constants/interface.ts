@@ -73,3 +73,13 @@ export interface ApiResponse<T = unknown> {
   timestamp: string;
   path?: string;
 }
+
+export interface JwtPayload {
+  sub: number;
+  email: string;
+  isSuperAdmin?: boolean;
+  role?: string;
+  permissions?: Array<{ code: string }>;
+  iat?: number;
+  exp?: number;
+}

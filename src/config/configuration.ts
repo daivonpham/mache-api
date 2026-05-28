@@ -13,6 +13,8 @@ export default () => ({
   jwt: {
     secret: process.env.JWT_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresRefreshIn: process.env.JWT_EXPIRES_REFRESH_IN,
+    saltRounds: parseInt(process.env.JWT_SALT_ROUNDS || "10", 10),
   },
   swagger: {
     title: process.env.SWAGGER_TITLE || "NestJS API",

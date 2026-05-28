@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/biexce-crm-admin
 /build
 node_modules
 # Logs
