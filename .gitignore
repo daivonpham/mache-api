@@ -58,3 +58,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Ignore all folders inside storages
 storages/*/
+
+# Uploaded files (keep folder)
+/uploads/*
+!/uploads/.gitkeep

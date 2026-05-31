@@ -4,7 +4,7 @@ import { Transform } from "class-transformer";
 import { IsBoolean, IsOptional } from "class-validator";
 
 export class ProfileQueryDto extends QueryBaseDto {
-  @ApiPropertyOptional({ example: true, description: "Trạng thái profile" })
+  @ApiPropertyOptional({ description: "Trạng thái profile" })
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => value === "true")

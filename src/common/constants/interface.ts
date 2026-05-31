@@ -23,15 +23,15 @@ export interface GetAllGenericOptions {
 }
 
 export class QueryBaseDto {
-  @ApiPropertyOptional({ example: "search term" })
+  @ApiPropertyOptional({ description: "Từ khóa tìm kiếm" })
   @IsOptional()
   search?: string;
 
-  @ApiPropertyOptional({ example: "createdAt" })
+  @ApiPropertyOptional({ description: "Tên cột sắp xếp" })
   @IsOptional()
   sortBy?: string;
 
-  @ApiPropertyOptional({ enum: SortOrder, example: SortOrder.DESC })
+  @ApiPropertyOptional({ enum: SortOrder, description: "ASC hoặc DESC" })
   @IsOptional()
   @IsEnum(SortOrder)
   sort?: SortOrder;
@@ -39,7 +39,7 @@ export class QueryBaseDto {
   @ApiPropertyOptional({
     type: String,
     format: "date-time",
-    example: "2024-01-01T00:00:00Z",
+    description: "Lọc từ ngày (ISO 8601)",
   })
   @IsOptional()
   @IsDateString()
@@ -48,17 +48,18 @@ export class QueryBaseDto {
   @ApiPropertyOptional({
     type: String,
     format: "date-time",
-    example: "2024-12-31T23:59:59Z",
+    description: "Lọc đến ngày (ISO 8601)",
   })
   @IsOptional()
   @IsDateString()
   toDate?: string;
-  @ApiPropertyOptional({ example: 1 })
+
+  @ApiPropertyOptional({ description: "Trang (mặc định 1)" })
   @IsOptional()
   @ToNumber()
   page: number;
 
-  @ApiPropertyOptional({ example: 10 })
+  @ApiPropertyOptional({ description: "Số bản ghi mỗi trang (mặc định 10)" })
   @IsOptional()
   @ToNumber()
   limit: number;

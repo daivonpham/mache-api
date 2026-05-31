@@ -22,4 +22,7 @@ export default () => ({
       process.env.SWAGGER_DESCRIPTION || "NestJS Swagger Documentation",
     version: process.env.SWAGGER_VERSION || "1.0",
   },
+  upload: {
+    dir: process.env.UPLOAD_DIR || "storages/uploads",
+  },
 });

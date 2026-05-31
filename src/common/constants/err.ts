@@ -10,4 +10,23 @@ export enum ErrorMessage {
   CONFIRM_PASSWORD_NOT_CORRECT = "Xác nhận mật khẩu không đúng",
   FEATURE_NOT_FOUND = "Không tìm thấy gói dịch vụ",
   CUSTOMER_NOT_FOUND = "Không tìm thấy khách hàng",
+  MEDIA_NOT_FOUND = "Không tìm thấy file media",
+  INVALID_FILE_TYPE = "Định dạng file không được hỗ trợ",
+  FILE_TOO_LARGE = "File vượt quá dung lượng cho phép",
+  FILE_REQUIRED = "Vui lòng chọn file để upload",
+
+  SLUG_ALREADY_EXISTS = "Slug đã tồn tại",
+  CATEGORY_CANNOT_BE_PARENT_OF_ITSELF = "Danh mục không thể là cha của chính nó",
+  CATEGORY_PARENT_NOT_FOUND = "Danh mục cha không tồn tại",
+  CATEGORY_NOT_FOUND = "Danh mục không tồn tại",
+  CATEGORY_CANNOT_BE_DELETED_HAS_CHILDREN = "Danh mục không thể bị xóa vì có danh mục con",
+
+  BRAND_NOT_FOUND = "Không tìm thấy thương hiệu",
+
+  PRODUCT_NOT_FOUND = "Không tìm thấy sản phẩm",
+  PRODUCT_SLUG_ALREADY_EXISTS = "Slug sản phẩm đã tồn tại",
+  PRODUCT_SKU_ALREADY_EXISTS = "SKU đã tồn tại",
+  PRODUCT_CATEGORY_NOT_FOUND = "Danh mục sản phẩm không tồn tại",
+  PRODUCT_BRAND_NOT_FOUND = "Thương hiệu không tồn tại",
+  PRODUCT_GALLERY_MUST_BE_IMAGE = "Gallery chỉ chấp nhận file ảnh",
 }
