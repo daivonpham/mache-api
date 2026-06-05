@@ -1,9 +1,7 @@
-export class BrandResponse {
+export class BlogTagResponse {
   id: number;
   name: string;
   slug: string;
-  description?: string;
-  logo: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

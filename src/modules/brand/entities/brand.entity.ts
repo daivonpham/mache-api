@@ -8,6 +8,9 @@ export class Brand extends BaseEntity {
   @Column("varchar", { name: "name", length: 255 })
   name: string;
 
+  @Column("varchar", { name: "slug", length: 255, nullable: true })
+  slug: string;
+
   @Column("text", { name: "description", nullable: true })
   description?: string;
 

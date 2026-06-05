@@ -5,7 +5,7 @@ export class AddBrandTable1780200000000 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TABLE "brands" (
+      CREATE TABLE IF NOT EXISTS "brands" (
         "id" SERIAL NOT NULL,
         "is_active" boolean NOT NULL DEFAULT true,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -18,12 +18,12 @@ export class AddBrandTable1780200000000 implements MigrationInterface {
       )
     `);
     await queryRunner.query(
-      `CREATE INDEX "IDX_brands_created_at" ON "brands" ("created_at")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_brands_created_at" ON "brands" ("created_at")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "public"."IDX_brands_created_at"`);
-    await queryRunner.query(`DROP TABLE "brands"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_brands_created_at"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "brands"`);
   }
 }

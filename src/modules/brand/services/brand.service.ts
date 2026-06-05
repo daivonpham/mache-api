@@ -24,6 +24,7 @@ export class BrandService extends BaseService<Brand> {
     return {
       id: brand.id,
       name: brand.name,
+      slug: brand.slug,
       description: brand.description,
       logo: brand.logo,
       isActive: brand.isActive,
@@ -46,6 +47,7 @@ export class BrandService extends BaseService<Brand> {
       select: [
         "id",
         "name",
+        "slug",
         "description",
         "logo",
         "isActive",

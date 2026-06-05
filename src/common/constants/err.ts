@@ -29,4 +29,14 @@ export enum ErrorMessage {
   PRODUCT_CATEGORY_NOT_FOUND = "Danh mục sản phẩm không tồn tại",
   PRODUCT_BRAND_NOT_FOUND = "Thương hiệu không tồn tại",
   PRODUCT_GALLERY_MUST_BE_IMAGE = "Gallery chỉ chấp nhận file ảnh",
+
+  BLOG_CATEGORY_NOT_FOUND = "Không tìm thấy danh mục blog",
+  BLOG_CATEGORY_IN_USE = "Danh mục blog đang được dùng bởi bài viết",
+  BLOG_POST_NOT_FOUND = "Không tìm thấy bài viết",
+  BLOG_TAG_NOT_FOUND = "Không tìm thấy tag blog",
+  BLOG_TAG_NAME_ALREADY_EXISTS = "Tên tag đã tồn tại",
+  BLOG_TAG_SLUG_ALREADY_EXISTS = "Slug tag đã tồn tại",
+  BLOG_CATEGORY_IDS_REQUIRED = "categoryIds không được rỗng",
+  BLOG_PRIMARY_CATEGORY_INVALID = "Danh mục chính phải nằm trong danh sách categoryIds",
+  BLOG_PRODUCT_IDS_MAX_TWO = "Mỗi bài viết chỉ được gắn tối đa 2 sản phẩm",
 }

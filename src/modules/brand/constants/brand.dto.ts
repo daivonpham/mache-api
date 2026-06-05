@@ -16,6 +16,12 @@ export class CreateBrandDto {
   @MaxLength(255)
   name: string;
 
+  @ApiProperty({ example: "smc" })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  slug: string;
+
   @ApiPropertyOptional({ example: "Thương hiệu van khí nén Nhật Bản" })
   @IsOptional()
   @IsString()

@@ -7,7 +7,7 @@ export class AddProductAndGalleryTables1780210000000
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TABLE "products" (
+      CREATE TABLE IF NOT EXISTS "products" (
         "id" SERIAL NOT NULL,
         "is_active" boolean NOT NULL DEFAULT true,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -37,17 +37,17 @@ export class AddProductAndGalleryTables1780210000000
       )
     `);
     await queryRunner.query(
-      `CREATE INDEX "IDX_products_created_at" ON "products" ("created_at")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_products_created_at" ON "products" ("created_at")`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_products_category_id" ON "products" ("category_id")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_products_category_id" ON "products" ("category_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_products_brand_id" ON "products" ("brand_id")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_products_brand_id" ON "products" ("brand_id")`,
     );
 
     await queryRunner.query(`
-      CREATE TABLE "product_images" (
+      CREATE TABLE IF NOT EXISTS "product_images" (
         "id" SERIAL NOT NULL,
         "product_id" integer NOT NULL,
         "media_id" integer NOT NULL,
@@ -61,22 +61,28 @@ export class AddProductAndGalleryTables1780210000000
       )
     `);
     await queryRunner.query(
-      `CREATE INDEX "IDX_product_images_product_id" ON "product_images" ("product_id")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_product_images_product_id" ON "product_images" ("product_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_product_images_media_id" ON "product_images" ("media_id")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_product_images_media_id" ON "product_images" ("media_id")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "public"."IDX_product_images_media_id"`);
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_product_images_product_id"`,
+      `DROP INDEX IF EXISTS "public"."IDX_product_images_media_id"`,
     );
-    await queryRunner.query(`DROP TABLE "product_images"`);
-    await queryRunner.query(`DROP INDEX "public"."IDX_products_brand_id"`);
-    await queryRunner.query(`DROP INDEX "public"."IDX_products_category_id"`);
-    await queryRunner.query(`DROP INDEX "public"."IDX_products_created_at"`);
-    await queryRunner.query(`DROP TABLE "products"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "public"."IDX_product_images_product_id"`,
+    );
+    await queryRunner.query(`DROP TABLE IF EXISTS "product_images"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_products_brand_id"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "public"."IDX_products_category_id"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "public"."IDX_products_created_at"`,
+    );
+    await queryRunner.query(`DROP TABLE IF EXISTS "products"`);
   }
 }
