@@ -39,4 +39,13 @@ export enum ErrorMessage {
   BLOG_CATEGORY_IDS_REQUIRED = "categoryIds không được rỗng",
   BLOG_PRIMARY_CATEGORY_INVALID = "Danh mục chính phải nằm trong danh sách categoryIds",
   BLOG_PRODUCT_IDS_MAX_TWO = "Mỗi bài viết chỉ được gắn tối đa 2 sản phẩm",
+
+  REVIEW_CATEGORY_NOT_FOUND = "Không tìm thấy danh mục review",
+  REVIEW_CATEGORY_IN_USE = "Danh mục review đang được dùng bởi bài review",
+  PRODUCT_REVIEW_NOT_FOUND = "Không tìm thấy bài review sản phẩm",
+  PRODUCT_REVIEW_CATEGORY_IDS_REQUIRED = "categoryIds không được rỗng",
+  PRODUCT_REVIEW_CATEGORY_IDS_DUPLICATE = "categoryIds không được trùng lặp",
+  PRODUCT_REVIEW_PRODUCT_IDS_REQUIRED = "productIds không được rỗng",
+  PRODUCT_REVIEW_PRODUCT_IDS_DUPLICATE = "productIds không được trùng lặp",
+  INVALID_YOUTUBE_URL = "Link YouTube không hợp lệ",
 }

@@ -5,3 +5,4 @@ export * from "@modules/category/category.module";
 export * from "@modules/brand/brand.module";
 export * from "@modules/product/product.module";
 export * from "@modules/blog/blog.module";
+export * from "@modules/review/review.module";

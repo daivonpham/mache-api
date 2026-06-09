@@ -20,6 +20,7 @@ export class BaseEntity {
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
+  @Sortable()
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
