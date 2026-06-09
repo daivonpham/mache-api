@@ -23,7 +23,9 @@ export class AddBrandTable1780200000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_brands_created_at"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "public"."IDX_brands_created_at"`,
+    );
     await queryRunner.query(`DROP TABLE IF EXISTS "brands"`);
   }
 }

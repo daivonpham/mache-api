@@ -12,12 +12,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Auth } from "src/common/decorators/auth.decorator";
 import { CurrentUser } from "src/common/decorators/current-user.decorator";
 import type { JwtPayload } from "src/common/constants/interface";
@@ -93,7 +88,9 @@ export class MediaController {
   @Delete(":id")
   @Auth()
   @ApiOperation({ summary: "Xóa media (file + soft delete DB)" })
-  async remove(@Param("id", ParseIntPipe) id: number): Promise<{ message: string }> {
+  async remove(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     await this.mediaService.remove(id);
     return { message: "Deleted successfully" };
   }

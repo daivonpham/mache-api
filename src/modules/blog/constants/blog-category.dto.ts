@@ -1,4 +1,9 @@
-import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from "@nestjs/swagger";
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+  PickType,
+} from "@nestjs/swagger";
 import {
   IsBoolean,
   IsNotEmpty,

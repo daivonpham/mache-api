@@ -242,7 +242,7 @@ export class BaseService<Entity extends ObjectLiteral> {
       }
     });
 
-    if (options.filter.isActive === undefined) {
+    if (options.filter.isActive === undefined && !options.getAll) {
       options.filter.isActive = true;
     }
     if (options.filter.isDeleted === undefined) {

@@ -3,7 +3,8 @@ export class BrandResponse {
   name: string;
   slug: string;
   description?: string;
-  logo: string;
+  logoMediaId: number;
+  logoUrl?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

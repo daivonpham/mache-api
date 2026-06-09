@@ -128,7 +128,10 @@ export class CreateProductDto {
   @Max(100)
   discountPercent?: number | null;
 
-  @ApiPropertyOptional({ example: "89000", description: "Text: số, Liên hệ, ????..." })
+  @ApiPropertyOptional({
+    example: "89000",
+    description: "Text: số, Liên hệ, ????...",
+  })
   @IsOptional()
   @IsString()
   @MaxLength(255)
@@ -153,8 +156,18 @@ export class CreateProductDto {
   inStock?: boolean;
 
   @ApiPropertyOptional({
+    example: 12,
+    description: "media.id ảnh thumbnail sau khi upload",
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @ToNumber()
+  thumbnailMediaId?: number | null;
+
+  @ApiPropertyOptional({
     example: [12, 45],
-    description: "media.id sau khi upload — thứ tự mảng = sortOrder",
+    description: "media.id sau khi upload — thứ tự mảng = sortOrder gallery",
   })
   @IsOptional()
   @IsArray()

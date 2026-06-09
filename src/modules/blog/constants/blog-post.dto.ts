@@ -66,7 +66,10 @@ export class CreateBlogPostDto {
   @Type(() => BlogSeoDto)
   seo?: BlogSeoDto | null;
 
-  @ApiPropertyOptional({ enum: BlogPublishStatus, default: BlogPublishStatus.DRAFT })
+  @ApiPropertyOptional({
+    enum: BlogPublishStatus,
+    default: BlogPublishStatus.DRAFT,
+  })
   @IsOptional()
   @IsEnum(BlogPublishStatus)
   publishStatus?: BlogPublishStatus;

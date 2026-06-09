@@ -44,7 +44,9 @@ export class BlogTagService extends BaseService<BlogTag> {
         where: { name: dto.name },
       });
       if (byName && byName.id !== excludeId) {
-        throw new BadRequestException(ErrorMessage.BLOG_TAG_NAME_ALREADY_EXISTS);
+        throw new BadRequestException(
+          ErrorMessage.BLOG_TAG_NAME_ALREADY_EXISTS,
+        );
       }
     }
     if (dto.slug) {
@@ -52,7 +54,9 @@ export class BlogTagService extends BaseService<BlogTag> {
         where: { slug: dto.slug },
       });
       if (bySlug && bySlug.id !== excludeId) {
-        throw new BadRequestException(ErrorMessage.BLOG_TAG_SLUG_ALREADY_EXISTS);
+        throw new BadRequestException(
+          ErrorMessage.BLOG_TAG_SLUG_ALREADY_EXISTS,
+        );
       }
     }
   }
@@ -75,7 +79,7 @@ export class BlogTagService extends BaseService<BlogTag> {
     });
     return {
       ...result,
-      data: result.data.map((row) => this.toResponse(row as BlogTag)),
+      data: result.data.map((row) => this.toResponse(row)),
     };
   }
 

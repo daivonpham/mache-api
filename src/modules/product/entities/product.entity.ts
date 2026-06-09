@@ -2,6 +2,7 @@ import { BaseEntity } from "src/common/base/entities/base-entity";
 import { Searchable } from "src/common/decorators/entity-meta.decorator";
 import { Brand } from "src/modules/brand/entities/brand.entity";
 import { Category } from "src/modules/category/entities/category.entity";
+import { Media } from "src/modules/media/entities/media.entity";
 import {
   ProductSeo,
   ProductSpecification,
@@ -37,6 +38,13 @@ export class Product extends BaseEntity {
 
   @Column("text", { name: "description", nullable: true })
   description?: string;
+
+  @Column("int", { name: "thumbnail_media_id", nullable: true })
+  thumbnailMediaId?: number | null;
+
+  @ManyToOne(() => Media, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "thumbnail_media_id" })
+  thumbnailMedia?: Media;
 
   @Index()
   @Column("int", { name: "category_id" })

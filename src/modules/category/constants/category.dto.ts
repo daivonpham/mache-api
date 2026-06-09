@@ -1,5 +1,9 @@
-import { ApiProperty, ApiPropertyOptional, PartialType, PickType  } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+  PickType,
+} from "@nestjs/swagger";
 import {
   IsBoolean,
   IsNotEmpty,
@@ -34,7 +38,10 @@ export class CreateCategoryDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ example: "valve", description: "Icon danh mục (class name hoặc key)" })
+  @ApiProperty({
+    example: "valve",
+    description: "Icon danh mục (class name hoặc key)",
+  })
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
@@ -58,9 +65,9 @@ export class CreateCategoryDto {
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}
 
 export class CategoryQueryDto extends PickType(QueryBaseDto, [
-    "page",
-    "limit",
-    "search",
+  "page",
+  "limit",
+  "search",
 ]) {
   @ApiPropertyOptional({
     description: "Lọc danh mục con theo parentId; để trống = tất cả",
@@ -69,9 +76,12 @@ export class CategoryQueryDto extends PickType(QueryBaseDto, [
   @ToNumber()
   parentId?: number;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description:
+      "true = chỉ active, false = chỉ inactive, bỏ trống = lấy tất cả",
+  })
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === "true" || value === true)
+  @ToBoolean()
   isActive?: boolean;
 }

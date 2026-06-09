@@ -50,7 +50,8 @@ export class BlogPostController {
 
   @Put(":id")
   @ApiOperation({
-    summary: "Cập nhật bài viết (gửi categoryIds/tagIds/productIds để thay quan hệ)",
+    summary:
+      "Cập nhật bài viết (gửi categoryIds/tagIds/productIds để thay quan hệ)",
   })
   async update(
     @Param("id", ParseIntPipe) id: number,

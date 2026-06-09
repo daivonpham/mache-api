@@ -1,13 +1,20 @@
-import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from "@nestjs/swagger";
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+  PickType,
+} from "@nestjs/swagger";
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
+  Min,
 } from "class-validator";
 import { QueryBaseDto } from "src/common/constants/interface";
-import { ToBoolean } from "src/common/decorators/transform.decorator";
+import { ToBoolean, ToNumber } from "src/common/decorators/transform.decorator";
 
 export class CreateBrandDto {
   @ApiProperty({ example: "SMC" })
@@ -28,13 +35,13 @@ export class CreateBrandDto {
   description?: string;
 
   @ApiProperty({
-    example: "/uploads/2025/05/abc.png",
-    description: "URL logo (thường từ module media)",
+    example: 1,
+    description: "media.id sau khi upload logo",
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(500)
-  logo: string;
+  @IsInt()
+  @Min(1)
+  @ToNumber()
+  logoMediaId: number;
 
   @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()

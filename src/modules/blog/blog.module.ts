@@ -28,11 +28,7 @@ import { BlogTagService } from "./services/blog-tag.service";
       Media,
     ]),
   ],
-  controllers: [
-    BlogCategoryController,
-    BlogTagController,
-    BlogPostController,
-  ],
+  controllers: [BlogCategoryController, BlogTagController, BlogPostController],
   providers: [BlogCategoryService, BlogTagService, BlogPostService],
   exports: [BlogCategoryService, BlogTagService, BlogPostService],
 })

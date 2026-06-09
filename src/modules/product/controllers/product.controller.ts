@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -58,6 +59,26 @@ export class ProductController {
     @Body() dto: UpdateProductDto,
   ): Promise<ProductResponse> {
     return this.productService.update(id, dto);
+  }
+
+  @Patch(":id/toggle-in-stock")
+  @ApiOperation({
+    summary: "Đảo trạng thái tồn kho (inStock true ↔ false)",
+  })
+  async toggleInStock(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<ProductResponse> {
+    return this.productService.toggleInStock(id);
+  }
+
+  @Patch(":id/toggle-active")
+  @ApiOperation({
+    summary: "Đảo trạng thái hiển thị (isActive true ↔ false)",
+  })
+  async toggleIsActive(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<ProductResponse> {
+    return this.productService.toggleIsActive(id);
   }
 
   @Delete(":id")

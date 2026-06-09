@@ -37,9 +37,7 @@ export class BrandController {
 
   @Get(":id")
   @ApiOperation({ summary: "Chi tiết thương hiệu" })
-  async findOne(
-    @Param("id", ParseIntPipe) id: number,
-  ): Promise<BrandResponse> {
+  async findOne(@Param("id", ParseIntPipe) id: number): Promise<BrandResponse> {
     return this.brandService.findOne(id);
   }
 

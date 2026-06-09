@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddProductAndGalleryTables1780210000000
-  implements MigrationInterface
-{
+export class AddProductAndGalleryTables1780210000000 implements MigrationInterface {
   name = "AddProductAndGalleryTables1780210000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -76,7 +74,9 @@ export class AddProductAndGalleryTables1780210000000
       `DROP INDEX IF EXISTS "public"."IDX_product_images_product_id"`,
     );
     await queryRunner.query(`DROP TABLE IF EXISTS "product_images"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_products_brand_id"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "public"."IDX_products_brand_id"`,
+    );
     await queryRunner.query(
       `DROP INDEX IF EXISTS "public"."IDX_products_category_id"`,
     );

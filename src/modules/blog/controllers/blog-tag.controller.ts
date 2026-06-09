@@ -37,7 +37,9 @@ export class BlogTagController {
 
   @Get(":id")
   @ApiOperation({ summary: "Chi tiết tag blog" })
-  async findOne(@Param("id", ParseIntPipe) id: number): Promise<BlogTagResponse> {
+  async findOne(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<BlogTagResponse> {
     return this.blogTagService.findOne(id);
   }
 

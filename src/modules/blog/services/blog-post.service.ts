@@ -91,13 +91,8 @@ export class BlogPostService extends BaseService<BlogPost> {
     >;
     relations: RelationIds;
   } {
-    const {
-      categoryIds,
-      primaryCategoryId,
-      tagIds,
-      productIds,
-      ...payload
-    } = dto;
+    const { categoryIds, primaryCategoryId, tagIds, productIds, ...payload } =
+      dto;
     return {
       payload,
       relations: { categoryIds, primaryCategoryId, tagIds, productIds },
@@ -124,10 +119,7 @@ export class BlogPostService extends BaseService<BlogPost> {
     >,
   ): Partial<BlogPost> {
     const publishStatus = dto.publishStatus ?? BlogPublishStatus.DRAFT;
-    const publishedAt = this.resolvePublishedAt(
-      publishStatus,
-      dto.publishedAt,
-    );
+    const publishedAt = this.resolvePublishedAt(publishStatus, dto.publishedAt);
     const { scheduledAt, publishedAt: _pa, publishStatus: _ps, ...rest } = dto;
 
     return {
@@ -180,9 +172,7 @@ export class BlogPostService extends BaseService<BlogPost> {
     }
     const primary = primaryCategoryId ?? categoryIds[0];
     if (!categoryIds.includes(primary)) {
-      throw new BadRequestException(
-        ErrorMessage.BLOG_PRIMARY_CATEGORY_INVALID,
-      );
+      throw new BadRequestException(ErrorMessage.BLOG_PRIMARY_CATEGORY_INVALID);
     }
   }
 
@@ -356,8 +346,7 @@ export class BlogPostService extends BaseService<BlogPost> {
     if (relations.tagIds) await this.assertTags(relations.tagIds);
     if (relations.productIds) await this.assertProducts(relations.productIds);
 
-    const publishStatus =
-      payload.publishStatus ?? existing.publishStatus;
+    const publishStatus = payload.publishStatus ?? existing.publishStatus;
     const {
       scheduledAt,
       publishedAt: publishedAtInput,
@@ -368,9 +357,7 @@ export class BlogPostService extends BaseService<BlogPost> {
     const postPayload: Partial<BlogPost> = { ...rest };
 
     if (scheduledAt !== undefined) {
-      postPayload.scheduledAt = scheduledAt
-        ? new Date(scheduledAt)
-        : null;
+      postPayload.scheduledAt = scheduledAt ? new Date(scheduledAt) : null;
     }
     if (payload.publishStatus !== undefined) {
       postPayload.publishStatus = publishStatus;

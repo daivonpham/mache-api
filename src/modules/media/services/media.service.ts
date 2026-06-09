@@ -35,6 +35,7 @@ export class MediaService extends BaseService<Media> {
       kind: stored.kind,
       alt,
       uploadedBy,
+      isActive: true,
     });
 
     const saved = await this.mediaRepository.save(media);

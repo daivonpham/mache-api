@@ -47,7 +47,7 @@ export class ProductService extends BaseService<Product> {
         id: row.id,
         mediaId: row.mediaId,
         sortOrder: row.sortOrder,
-        url: row.media!.url,
+        url: row.media.url,
         alt: row.media?.alt,
       }));
   }
@@ -60,18 +60,22 @@ export class ProductService extends BaseService<Product> {
       sku: product.sku,
       description: product.description,
       categoryId: product.categoryId,
+      categoryName: product.category?.name,
       brandId: product.brandId ?? null,
+      brandName: product.brand?.name,
       shopeeUrl: product.shopeeUrl,
       specifications: product.specifications ?? [],
       isFeatured: product.isFeatured,
       hasDiscount: product.hasDiscount,
       discountPercent: product.hasDiscount
-        ? product.discountPercent ?? null
+        ? (product.discountPercent ?? null)
         : null,
       price: product.price ?? null,
       seo: product.seo ?? null,
       isActive: product.isActive,
       inStock: product.inStock,
+      thumbnailMediaId: product.thumbnailMediaId ?? null,
+      thumbnailUrl: product.thumbnailMedia?.url ?? null,
       gallery: this.mapGallery(product.images),
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
@@ -79,7 +83,10 @@ export class ProductService extends BaseService<Product> {
   }
 
   private productRelations = {
+    thumbnailMedia: true,
     images: { media: true },
+    category: true,
+    brand: true,
   } as const;
 
   private async findWithGallery(id: number): Promise<Product> {
@@ -93,7 +100,10 @@ export class ProductService extends BaseService<Product> {
     return product;
   }
 
-  private async assertSlugUnique(slug?: string, excludeId?: number): Promise<void> {
+  private async assertSlugUnique(
+    slug?: string,
+    excludeId?: number,
+  ): Promise<void> {
     if (!slug) return;
     const existing = await this.productRepository.findOne({ where: { slug } });
     if (existing && existing.id !== excludeId) {
@@ -101,7 +111,10 @@ export class ProductService extends BaseService<Product> {
     }
   }
 
-  private async assertSkuUnique(sku?: string, excludeId?: number): Promise<void> {
+  private async assertSkuUnique(
+    sku?: string,
+    excludeId?: number,
+  ): Promise<void> {
     if (!sku) return;
     const existing = await this.productRepository.findOne({ where: { sku } });
     if (existing && existing.id !== excludeId) {
@@ -120,9 +133,26 @@ export class ProductService extends BaseService<Product> {
 
   private async assertBrandExists(brandId?: number | null): Promise<void> {
     if (brandId == null) return;
-    const brand = await this.brandRepository.findOne({ where: { id: brandId } });
+    const brand = await this.brandRepository.findOne({
+      where: { id: brandId },
+    });
     if (!brand) {
       throw new BadRequestException(ErrorMessage.PRODUCT_BRAND_NOT_FOUND);
+    }
+  }
+
+  private async assertThumbnailMedia(
+    thumbnailMediaId?: number | null,
+  ): Promise<void> {
+    if (thumbnailMediaId == null) return;
+    const media = await this.mediaRepository.findOne({
+      where: { id: thumbnailMediaId },
+    });
+    if (!media) {
+      throw new BadRequestException(ErrorMessage.MEDIA_NOT_FOUND);
+    }
+    if (media.kind !== MediaKind.IMAGE) {
+      throw new BadRequestException(ErrorMessage.PRODUCT_GALLERY_MUST_BE_IMAGE);
     }
   }
 
@@ -148,7 +178,7 @@ export class ProductService extends BaseService<Product> {
     return {
       ...dto,
       hasDiscount,
-      discountPercent: hasDiscount ? dto.discountPercent ?? null : null,
+      discountPercent: hasDiscount ? (dto.discountPercent ?? null) : null,
     };
   }
 
@@ -182,6 +212,8 @@ export class ProductService extends BaseService<Product> {
     await this.assertSkuUnique(dto.sku);
     await this.assertCategoryExists(dto.categoryId);
     await this.assertBrandExists(dto.brandId);
+
+    await this.assertThumbnailMedia(dto.thumbnailMediaId);
 
     const { payload, galleryMediaIds } = this.stripGalleryFromDto(dto);
     if (galleryMediaIds?.length) {
@@ -228,14 +260,20 @@ export class ProductService extends BaseService<Product> {
       search: dto.search,
       page: dto.page,
       limit: dto.limit,
+      getAll: true,
+      relations: ["thumbnailMedia", "images", "images.media", "category", "brand"],
       select: [
         "id",
         "name",
         "slug",
         "sku",
         "description",
+        "thumbnailMediaId",
+        "thumbnailMedia.url",
         "categoryId",
+        "category.name",
         "brandId",
+        "brand.name",
         "shopeeUrl",
         "isFeatured",
         "hasDiscount",
@@ -245,11 +283,17 @@ export class ProductService extends BaseService<Product> {
         "inStock",
         "createdAt",
         "updatedAt",
+        "images",
+        "images.id",
+        "images.mediaId",
+        "images.sortOrder",
+        "images.media.url",
+        "images.media.alt",
       ],
     });
     return {
       ...result,
-      data: result.data.map((row) => this.toResponse(row as Product)),
+      data: result.data.map((row) => this.toResponse(row)),
     };
   }
 
@@ -283,6 +327,10 @@ export class ProductService extends BaseService<Product> {
       throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
     }
 
+    if (dto.thumbnailMediaId !== undefined) {
+      await this.assertThumbnailMedia(dto.thumbnailMediaId);
+    }
+
     const { payload, galleryMediaIds } = this.stripGalleryFromDto(dto);
     if (galleryMediaIds !== undefined) {
       await this.assertGalleryMediaIds(galleryMediaIds);
@@ -313,6 +361,24 @@ export class ProductService extends BaseService<Product> {
       }
     });
 
+    return this.toResponse(await this.findWithGallery(id));
+  }
+
+  async toggleInStock(id: number): Promise<ProductResponse> {
+    const product = await this.productRepository.findOne({ where: { id } });
+    if (!product) {
+      throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+    await this.productRepository.update(id, { inStock: !product.inStock });
+    return this.toResponse(await this.findWithGallery(id));
+  }
+
+  async toggleIsActive(id: number): Promise<ProductResponse> {
+    const product = await this.productRepository.findOne({ where: { id } });
+    if (!product) {
+      throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+    await this.productRepository.update(id, { isActive: !product.isActive });
     return this.toResponse(await this.findWithGallery(id));
   }
 

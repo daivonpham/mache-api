@@ -15,7 +15,9 @@ export class ProductResponse {
   sku: string;
   description?: string;
   categoryId: number;
+  categoryName?: string;
   brandId?: number | null;
+  brandName?: string;
   shopeeUrl?: string;
   specifications: ProductSpecification[];
   isFeatured: boolean;
@@ -25,6 +27,8 @@ export class ProductResponse {
   seo?: ProductSeo | null;
   isActive: boolean;
   inStock: boolean;
+  thumbnailMediaId?: number | null;
+  thumbnailUrl?: string | null;
   gallery: ProductGalleryItemResponse[];
   createdAt: Date;
   updatedAt?: Date;

@@ -20,6 +20,7 @@ export interface GetAllGenericOptions {
   select?: string[];
   filter?: Record<string, any>;
   count?: string[];
+  getAll?: boolean;
 }
 
 export class QueryBaseDto {
