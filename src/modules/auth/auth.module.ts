@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { AuthService } from "./services/auth.services";
 import { JwtAuthService } from "./services/jwt.services";
 import { JwtModule } from "@nestjs/jwt";
@@ -9,6 +9,7 @@ import type { SignOptions } from "jsonwebtoken";
 const config = configuration();
 const jwtExpiresIn = (config.jwt.expiresIn ?? "1d") as SignOptions["expiresIn"];
 
+@Global()
 @Module({
   imports: [
     JwtModule.register({

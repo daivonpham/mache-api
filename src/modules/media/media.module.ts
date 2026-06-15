@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MulterModule } from "@nestjs/platform-express";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthModule } from "@modules/auth/auth.module";
 import { MediaController } from "./controllers/media.controller";
 import { Media } from "./entities/media.entity";
 import { MediaService } from "./services/media.service";
@@ -9,7 +8,6 @@ import { StorageService } from "./services/storage.service";
 
 @Module({
   imports: [
-    AuthModule,
     TypeOrmModule.forFeature([Media]),
     MulterModule.register({
       limits: {
