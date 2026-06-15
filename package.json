@@ -28,7 +28,8 @@
     "m:c": "node scripts/m-c.js",
     "m:r": "yarn typeorm migration:run -d src/database/data-source.ts",
     "m:rv": "yarn typeorm migration:revert -d src/database/data-source.ts",
-    "m:s": "yarn typeorm migration:show -d src/database/data-source.ts"
+    "m:s": "yarn typeorm migration:show -d src/database/data-source.ts",
+    "seed:admin": "ts-node -r tsconfig-paths/register src/database/seeds/seed-admin.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
