@@ -25,6 +25,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    if (!(exception instanceof HttpException)) {
+      console.error("[API Error]", request.method, request.url, exception);
+    }
+
     const exceptionResponse: string | HttpExceptionBody =
       exception instanceof HttpException
         ? exception.getResponse()
