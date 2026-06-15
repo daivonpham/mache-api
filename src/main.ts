@@ -1,13 +1,15 @@
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { join } from "path";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { ResponseTransformInterceptor } from "./common/interceptors/response-transform.interceptor";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   process.on("uncaughtException", (err) => {
     console.error("❌ Uncaught Exception:", err);
@@ -18,6 +20,14 @@ async function bootstrap() {
   });
 
   const configService = app.get(ConfigService);
+
+  app.useStaticAssets(
+    join(
+      process.cwd(),
+      configService.get<string>("upload.dir", "storages/uploads"),
+    ),
+    { prefix: "/uploads" },
+  );
 
   // const clientUrl = configService.get<string>('clientUrl', '*');
   // app.enableCors({

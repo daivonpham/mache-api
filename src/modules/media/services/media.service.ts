@@ -5,6 +5,7 @@ import { ErrorMessage } from "src/common/constants/err";
 import { Repository } from "typeorm";
 import { MediaQueryDto } from "../constants/media.dto";
 import { MediaResponse } from "../constants/media.response";
+import { UploadedFile } from "../constants/uploaded-file";
 import { Media } from "../entities/media.entity";
 import { StorageService } from "./storage.service";
 
@@ -19,7 +20,7 @@ export class MediaService extends BaseService<Media> {
   }
 
   async upload(
-    file: Express.Multer.File,
+    file: UploadedFile,
     uploadedBy?: number,
     alt?: string,
   ): Promise<MediaResponse> {
@@ -43,7 +44,7 @@ export class MediaService extends BaseService<Media> {
   }
 
   async uploadMany(
-    files: Express.Multer.File[],
+    files: UploadedFile[],
     uploadedBy?: number,
   ): Promise<MediaResponse[]> {
     const results: MediaResponse[] = [];

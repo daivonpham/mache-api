@@ -18,6 +18,7 @@ import { CurrentUser } from "src/common/decorators/current-user.decorator";
 import type { JwtPayload } from "src/common/constants/interface";
 import { MediaQueryDto, UploadMediaDto } from "../constants/media.dto";
 import { MediaResponse } from "../constants/media.response";
+import { toUploadedFile, toUploadedFiles } from "../constants/uploaded-file";
 import { MediaService } from "../services/media.service";
 
 @Controller("media")
@@ -40,11 +41,11 @@ export class MediaController {
   })
   @UseInterceptors(FileInterceptor("file"))
   async upload(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: unknown,
     @Body() dto: UploadMediaDto,
     @CurrentUser() user: JwtPayload,
   ): Promise<MediaResponse> {
-    return this.mediaService.upload(file, user.sub, dto.alt);
+    return this.mediaService.upload(toUploadedFile(file), user.sub, dto.alt);
   }
 
   @Post("upload/multiple")
@@ -65,10 +66,10 @@ export class MediaController {
   })
   @UseInterceptors(FilesInterceptor("files", 10))
   async uploadMultiple(
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() files: unknown,
     @CurrentUser() user: JwtPayload,
   ): Promise<MediaResponse[]> {
-    return this.mediaService.uploadMany(files ?? [], user.sub);
+    return this.mediaService.uploadMany(toUploadedFiles(files), user.sub);
   }
 
   @Get()

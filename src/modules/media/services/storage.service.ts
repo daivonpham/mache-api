@@ -8,6 +8,7 @@ import { mkdir, unlink, writeFile } from "fs/promises";
 import { extname, join } from "path";
 import { randomUUID } from "crypto";
 import { ErrorMessage } from "src/common/constants/err";
+import { UploadedFile } from "../constants/uploaded-file";
 import { MediaKind } from "../entities/media.entity";
 
 interface UploadConfig {
@@ -35,7 +36,7 @@ export class StorageService {
     return join(process.cwd(), this.uploadConfig.dir);
   }
 
-  validateFile(file?: Express.Multer.File): void {
+  validateFile(file?: UploadedFile): void {
     if (!file) {
       throw new BadRequestException(ErrorMessage.FILE_REQUIRED);
     }
@@ -57,7 +58,7 @@ export class StorageService {
   }
 
   async save(
-    file: Express.Multer.File,
+    file: UploadedFile,
   ): Promise<{ path: string; fileName: string; url: string; kind: MediaKind }> {
     this.validateFile(file);
 
