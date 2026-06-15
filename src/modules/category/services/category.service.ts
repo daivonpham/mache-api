@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseService } from "src/common/base/services/base-service";
 import { ErrorMessage } from "src/common/constants/err";
+import { Media, MediaKind } from "src/modules/media/entities/media.entity";
 import { Repository } from "typeorm";
 import {
   CategoryQueryDto,
@@ -15,11 +16,29 @@ import {
 import { CategoryResponse } from "../constants/category.response";
 import { Category } from "../entities/category.entity";
 
+const CATEGORY_RELATIONS = ["thumbnailMedia"];
+
+const CATEGORY_SELECT = [
+  "id",
+  "name",
+  "slug",
+  "description",
+  "icon",
+  "parentId",
+  "thumbnailMediaId",
+  "isActive",
+  "createdAt",
+  "updatedAt",
+  "thumbnailMedia.url",
+];
+
 @Injectable()
 export class CategoryService extends BaseService<Category> {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Media)
+    private readonly mediaRepository: Repository<Media>,
   ) {
     super(categoryRepository);
   }
@@ -32,10 +51,40 @@ export class CategoryService extends BaseService<Category> {
       description: category.description,
       icon: category.icon,
       parentId: category.parentId ?? null,
+      thumbnailMediaId: category.thumbnailMediaId ?? null,
+      thumbnailUrl: category.thumbnailMedia?.url ?? null,
       isActive: category.isActive,
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,
     };
+  }
+
+  private async assertThumbnailMedia(
+    thumbnailMediaId?: number | null,
+  ): Promise<void> {
+    if (thumbnailMediaId == null) return;
+    const media = await this.mediaRepository.findOne({
+      where: { id: thumbnailMediaId },
+    });
+    if (!media) {
+      throw new BadRequestException(ErrorMessage.MEDIA_NOT_FOUND);
+    }
+    if (media.kind !== MediaKind.IMAGE) {
+      throw new BadRequestException(ErrorMessage.PRODUCT_GALLERY_MUST_BE_IMAGE);
+    }
+  }
+
+  private async findCategoryOrThrow(
+    where: { id: number } | { slug: string },
+  ): Promise<Category> {
+    const category = await this.categoryRepository.findOne({
+      where,
+      relations: CATEGORY_RELATIONS,
+    });
+    if (!category) {
+      throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
+    }
+    return category;
   }
 
   private async assertSlugUnique(
@@ -70,58 +119,48 @@ export class CategoryService extends BaseService<Category> {
   async create(dto: CreateCategoryDto): Promise<CategoryResponse> {
     await this.assertSlugUnique(dto.slug);
     await this.assertParentValid(dto.parentId, undefined);
+    await this.assertThumbnailMedia(dto.thumbnailMediaId);
     const category = this.categoryRepository.create(dto);
     const saved = await this.categoryRepository.save(category);
-    return this.toResponse(saved);
+    return this.toResponse(await this.findCategoryOrThrow({ id: saved.id }));
   }
 
   async findAll(dto: CategoryQueryDto) {
-    return this.getAllGeneric({
+    const result = await this.getAllGeneric({
       getAll: true,
       filter: { parentId: dto.parentId, isActive: dto.isActive },
       search: dto.search,
       page: dto.page,
       limit: dto.limit,
-      select: [
-        "id",
-        "name",
-        "slug",
-        "description",
-        "icon",
-        "parentId",
-        "isActive",
-        "createdAt",
-        "updatedAt",
-      ],
+      relations: CATEGORY_RELATIONS,
+      select: CATEGORY_SELECT,
     });
+    return {
+      ...result,
+      data: result.data.map((category) => this.toResponse(category)),
+    };
   }
 
   async findOne(id: number): Promise<CategoryResponse> {
-    const category = await this.categoryRepository.findOne({ where: { id } });
-    if (!category) {
-      throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
-    }
-    return this.toResponse(category);
+    return this.toResponse(await this.findCategoryOrThrow({ id }));
   }
 
   async findBySlug(slug: string): Promise<CategoryResponse> {
-    const category = await this.categoryRepository.findOne({ where: { slug } });
-    if (!category) {
-      throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
-    }
-    return this.toResponse(category);
+    return this.toResponse(await this.findCategoryOrThrow({ slug }));
   }
 
   async update(id: number, dto: UpdateCategoryDto): Promise<CategoryResponse> {
     await this.assertSlugUnique(dto.slug, id);
     await this.assertParentValid(dto.parentId, id);
+    if (dto.thumbnailMediaId !== undefined) {
+      await this.assertThumbnailMedia(dto.thumbnailMediaId);
+    }
     const category = await this.categoryRepository.findOne({ where: { id } });
     if (!category) {
       throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
     }
     await this.categoryRepository.update(id, dto);
-    const updated = await this.categoryRepository.findOne({ where: { id } });
-    return this.toResponse(updated!);
+    return this.toResponse(await this.findCategoryOrThrow({ id }));
   }
 
   async delete(id: number): Promise<void> {

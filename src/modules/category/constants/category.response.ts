@@ -5,6 +5,8 @@ export class CategoryResponse {
   description?: string;
   icon: string;
   parentId?: number | null;
+  thumbnailMediaId?: number | null;
+  thumbnailUrl?: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

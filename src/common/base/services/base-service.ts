@@ -404,7 +404,7 @@ export class BaseService<Entity extends ObjectLiteral> {
         const order = sort?.toUpperCase() === "DESC" ? "DESC" : "ASC";
         qb.orderBy(`${alias}.${sortBy}`, order);
       }
-    } else {
+    } else if (!options.orderByRaw) {
       qb.orderBy(`${alias}.createdAt`, "DESC");
     }
 
@@ -448,6 +448,13 @@ export class BaseService<Entity extends ObjectLiteral> {
       relationAliases.forEach((relAlias) => {
         qb.addSelect(relAlias);
       });
+    }
+
+    if (options.orderByRaw) {
+      const order = sort?.toUpperCase() === "DESC" ? "DESC" : "ASC";
+      const expr = options.orderByRaw.replace(/\balias\b/g, alias);
+      qb.addSelect(expr, "_order_expr");
+      qb.orderBy("_order_expr", order, "NULLS LAST");
     }
 
     const page = Number(options.page) > 0 ? Number(options.page) : 1;

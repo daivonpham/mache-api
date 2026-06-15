@@ -79,7 +79,9 @@ export class CreateProductReviewDto {
   seo?: ReviewSeoDto | null;
 }
 
-export class UpdateProductReviewDto extends PartialType(CreateProductReviewDto) {}
+export class UpdateProductReviewDto extends PartialType(
+  CreateProductReviewDto,
+) {}
 
 export class ProductReviewQueryDto extends PickType(QueryBaseDto, [
   "page",

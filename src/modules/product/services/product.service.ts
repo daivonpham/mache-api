@@ -6,12 +6,14 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseService } from "src/common/base/services/base-service";
 import { ErrorMessage } from "src/common/constants/err";
+import { SortOrder } from "src/common/constants/interface";
 import { Brand } from "src/modules/brand/entities/brand.entity";
 import { Category } from "src/modules/category/entities/category.entity";
 import { Media, MediaKind } from "src/modules/media/entities/media.entity";
 import { In, Repository } from "typeorm";
 import {
   CreateProductDto,
+  ProductPriceSort,
   ProductQueryDto,
   UpdateProductDto,
 } from "../constants/product.dto";
@@ -249,6 +251,9 @@ export class ProductService extends BaseService<Product> {
   }
 
   async findAll(dto: ProductQueryDto) {
+    const priceOrder =
+      dto.priceSort === ProductPriceSort.DESC ? SortOrder.DESC : SortOrder.ASC;
+
     const result = await this.getAllGeneric({
       filter: {
         categoryId: dto.categoryId,
@@ -256,12 +261,25 @@ export class ProductService extends BaseService<Product> {
         isFeatured: dto.isFeatured,
         inStock: dto.inStock,
         isActive: dto.isActive,
+        hasDiscount: dto.isDiscount,
       },
       search: dto.search,
       page: dto.page,
       limit: dto.limit,
       getAll: true,
-      relations: ["thumbnailMedia", "images", "images.media", "category", "brand"],
+      ...(dto.priceSort
+        ? {
+            orderByRaw: `NULLIF(regexp_replace(alias.price, '[^0-9.]', '', 'g'), '')::numeric`,
+            sort: priceOrder,
+          }
+        : {}),
+      relations: [
+        "thumbnailMedia",
+        "images",
+        "images.media",
+        "category",
+        "brand",
+      ],
       select: [
         "id",
         "name",

@@ -1,5 +1,6 @@
 import { BaseEntity } from "src/common/base/entities/base-entity";
 import { Searchable } from "src/common/decorators/entity-meta.decorator";
+import { Media } from "src/modules/media/entities/media.entity";
 import {
   Column,
   Entity,
@@ -27,6 +28,13 @@ export class Category extends BaseEntity {
 
   @Column("varchar", { name: "icon", length: 50 })
   icon: string;
+
+  @Column("int", { name: "thumbnail_media_id", nullable: true })
+  thumbnailMediaId?: number | null;
+
+  @ManyToOne(() => Media, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "thumbnail_media_id" })
+  thumbnailMedia?: Media;
 
   /** null = danh mục gốc (cha) */
   @Column("int", { name: "parent_id", nullable: true })

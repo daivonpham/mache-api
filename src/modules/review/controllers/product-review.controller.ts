@@ -41,7 +41,9 @@ export class ProductReviewController {
 
   @Get("by-slug/:slug")
   @ApiOperation({ summary: "Chi tiết bài review theo slug" })
-  async findBySlug(@Param("slug") slug: string): Promise<ProductReviewResponse> {
+  async findBySlug(
+    @Param("slug") slug: string,
+  ): Promise<ProductReviewResponse> {
     return this.productReviewService.findBySlug(slug);
   }
 

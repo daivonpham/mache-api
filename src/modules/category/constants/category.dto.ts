@@ -6,11 +6,13 @@ import {
 } from "@nestjs/swagger";
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
   MaxLength,
+  Min,
 } from "class-validator";
 import { QueryBaseDto } from "src/common/constants/interface";
 import { ToBoolean, ToNumber } from "src/common/decorators/transform.decorator";
@@ -54,6 +56,16 @@ export class CreateCategoryDto {
   @IsOptional()
   @ToNumber()
   parentId?: number | null;
+
+  @ApiPropertyOptional({
+    example: 1,
+    description: "media.id ảnh thumbnail sau khi upload",
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @ToNumber()
+  thumbnailMediaId?: number | null;
 
   @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()

@@ -21,6 +21,7 @@ export interface GetAllGenericOptions {
   filter?: Record<string, any>;
   count?: string[];
   getAll?: boolean;
+  orderByRaw?: string;
 }
 
 export class QueryBaseDto {

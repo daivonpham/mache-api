@@ -8,6 +8,7 @@ import { Type } from "class-transformer";
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -22,6 +23,11 @@ import {
 import { QueryBaseDto } from "src/common/constants/interface";
 import { ToBoolean, ToNumber } from "src/common/decorators/transform.decorator";
 import { ProductSeo, ProductSpecification } from "./product.types";
+
+export enum ProductPriceSort {
+  ASC = "asc",
+  DESC = "desc",
+}
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -209,4 +215,18 @@ export class ProductQueryDto extends PickType(QueryBaseDto, [
   @IsBoolean()
   @ToBoolean()
   isActive?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  isDiscount?: boolean;
+
+  @ApiPropertyOptional({
+    enum: ProductPriceSort,
+    description: "Sắp xếp theo giá: asc = thấp → cao, desc = cao → thấp",
+  })
+  @IsOptional()
+  @IsEnum(ProductPriceSort)
+  priceSort?: ProductPriceSort;
 }

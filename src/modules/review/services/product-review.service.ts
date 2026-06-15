@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseService } from "src/common/base/services/base-service";
 import { ErrorMessage } from "src/common/constants/err";
-import { SortOrder } from "src/common/constants/interface";
 import { Product } from "src/modules/product/entities/product.entity";
 import { EntityManager, In, Repository } from "typeorm";
 import {
@@ -77,7 +76,9 @@ export class ProductReviewService extends BaseService<ProductReview> {
     super(productReviewRepository);
   }
 
-  private stripRelations<T extends CreateProductReviewDto | UpdateProductReviewDto>(
+  private stripRelations<
+    T extends CreateProductReviewDto | UpdateProductReviewDto,
+  >(
     dto: T,
   ): {
     payload: Omit<T, "productIds" | "categoryIds">;
@@ -373,7 +374,9 @@ export class ProductReviewService extends BaseService<ProductReview> {
   }
 
   async delete(id: number): Promise<void> {
-    const review = await this.productReviewRepository.findOne({ where: { id } });
+    const review = await this.productReviewRepository.findOne({
+      where: { id },
+    });
     if (!review) {
       throw new NotFoundException(ErrorMessage.PRODUCT_REVIEW_NOT_FOUND);
     }
