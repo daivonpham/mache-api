@@ -16,8 +16,7 @@ import { StorageService } from "./services/storage.service";
     TypeOrmModule.forFeature([Media]),
     MulterModule.registerAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: () => ({
         limits: {
           fileSize: 10 * 1024 * 1024,
         },

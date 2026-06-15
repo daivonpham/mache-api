@@ -1,7 +1,7 @@
 import { Transform } from "class-transformer";
 
 export function ToBoolean(): PropertyDecorator {
-  return Transform(({ value }) => {
+  return Transform(({ value }: { value: unknown }): unknown => {
     if (value === "true" || value === true || value === 1 || value === "1") {
       return true;
     }
@@ -13,7 +13,7 @@ export function ToBoolean(): PropertyDecorator {
 }
 
 export function ToNumber(): PropertyDecorator {
-  return Transform(({ value }) => {
+  return Transform(({ value }: { value: unknown }): unknown => {
     if (value === null || value === undefined || value === "") {
       return value;
     }
@@ -23,19 +23,26 @@ export function ToNumber(): PropertyDecorator {
 }
 
 export function ToString(): PropertyDecorator {
-  return Transform(({ value }) => {
+  return Transform(({ value }: { value: unknown }): unknown => {
     if (value === null || value === undefined) {
       return value;
     }
     if (typeof value === "string") {
       return value.trim();
     }
-    return String(value);
+    if (
+      typeof value === "number" ||
+      typeof value === "boolean" ||
+      typeof value === "bigint"
+    ) {
+      return String(value);
+    }
+    return value;
   });
 }
 
 export function ToArray(): PropertyDecorator {
-  return Transform(({ value }) => {
+  return Transform(({ value }: { value: unknown }): unknown => {
     if (value === null || value === undefined) {
       return value;
     }
@@ -50,7 +57,7 @@ export function ToArray(): PropertyDecorator {
 }
 
 export function ToUTC00(): PropertyDecorator {
-  return Transform(({ value }) => {
+  return Transform(({ value }: { value: unknown }): unknown => {
     if (value === null || value === undefined || value === "") {
       return value;
     }
@@ -65,7 +72,11 @@ export function ToUTC00(): PropertyDecorator {
       return isNaN(date.getTime()) ? value : date;
     }
 
-    const date = new Date(value);
-    return isNaN(date.getTime()) ? value : date;
+    if (typeof value === "number" || value instanceof Date) {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? value : date;
+    }
+
+    return value;
   });
 }

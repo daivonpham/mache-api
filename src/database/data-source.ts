@@ -7,7 +7,7 @@ dotenv.config();
 const config = configuration();
 
 export const dataSourceOptions: DataSourceOptions = {
-  type: (config.database.db as any) || "postgres",
+  type: config.database.db === "mysql" ? "mysql" : "postgres",
   host: config.database.host,
   port: config.database.port,
   username: config.database.username,

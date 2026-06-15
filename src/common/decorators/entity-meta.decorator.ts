@@ -3,13 +3,23 @@ import "reflect-metadata";
 export const SEARCHABLE_KEY = "custom:searchable";
 export const SORTABLE_KEY = "custom:sortable";
 
+function getOwnMetadataStringArray(key: string, target: object): string[] {
+  const metadata: unknown = Reflect.getOwnMetadata(key, target);
+  if (!Array.isArray(metadata)) {
+    return [];
+  }
+  return metadata.filter((item): item is string => typeof item === "string");
+}
+
 /**
  * Đánh dấu một thuộc tính trong Entity có thể được dùng để tìm kiếm (LIKE %search%)
  */
 export function Searchable(relationFields?: string[]): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
-    const existingSearchableProps =
-      Reflect.getOwnMetadata(SEARCHABLE_KEY, target) || [];
+    const existingSearchableProps = getOwnMetadataStringArray(
+      SEARCHABLE_KEY,
+      target,
+    );
 
     if (relationFields && relationFields.length > 0) {
       const relatedProps = relationFields.map(
@@ -35,8 +45,10 @@ export function Searchable(relationFields?: string[]): PropertyDecorator {
  */
 export function Sortable(): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
-    const existingSortableProps =
-      Reflect.getOwnMetadata(SORTABLE_KEY, target) || [];
+    const existingSortableProps = getOwnMetadataStringArray(
+      SORTABLE_KEY,
+      target,
+    );
     Reflect.defineMetadata(
       SORTABLE_KEY,
       [...existingSortableProps, propertyKey],
@@ -49,15 +61,16 @@ export function Sortable(): PropertyDecorator {
  * Hàm hỗ trợ lấy tất cả các thuộc tính được đánh dấu là @Searchable()
  * Bao gồm cả các thuộc tính được kế thừa từ class cha (ví dụ: BaseEntity)
  */
-export function getSearchableProperties(targetPrototype: any): string[] {
+export function getSearchableProperties(targetPrototype: object): string[] {
   let props: string[] = [];
-  let currentTarget = targetPrototype;
+  let currentTarget: object | null = targetPrototype;
 
   while (currentTarget && currentTarget !== Object.prototype) {
-    const targetProps =
-      Reflect.getOwnMetadata(SEARCHABLE_KEY, currentTarget) || [];
-    props = [...props, ...targetProps];
-    currentTarget = Object.getPrototypeOf(currentTarget);
+    props = [
+      ...props,
+      ...getOwnMetadataStringArray(SEARCHABLE_KEY, currentTarget),
+    ];
+    currentTarget = Object.getPrototypeOf(currentTarget) as object | null;
   }
 
   return [...new Set(props)];
@@ -67,15 +80,16 @@ export function getSearchableProperties(targetPrototype: any): string[] {
  * Hàm hỗ trợ lấy tất cả các thuộc tính được đánh dấu là @Sortable()
  * Bao gồm cả các thuộc tính được kế thừa từ class cha
  */
-export function getSortableProperties(targetPrototype: any): string[] {
+export function getSortableProperties(targetPrototype: object): string[] {
   let props: string[] = [];
-  let currentTarget = targetPrototype;
+  let currentTarget: object | null = targetPrototype;
 
   while (currentTarget && currentTarget !== Object.prototype) {
-    const targetProps =
-      Reflect.getOwnMetadata(SORTABLE_KEY, currentTarget) || [];
-    props = [...props, ...targetProps];
-    currentTarget = Object.getPrototypeOf(currentTarget);
+    props = [
+      ...props,
+      ...getOwnMetadataStringArray(SORTABLE_KEY, currentTarget),
+    ];
+    currentTarget = Object.getPrototypeOf(currentTarget) as object | null;
   }
 
   return [...new Set(props)];

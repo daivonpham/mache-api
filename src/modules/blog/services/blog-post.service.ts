@@ -120,7 +120,15 @@ export class BlogPostService extends BaseService<BlogPost> {
   ): Partial<BlogPost> {
     const publishStatus = dto.publishStatus ?? BlogPublishStatus.DRAFT;
     const publishedAt = this.resolvePublishedAt(publishStatus, dto.publishedAt);
-    const { scheduledAt, publishedAt: _pa, publishStatus: _ps, ...rest } = dto;
+    const scheduledAt = dto.scheduledAt;
+    const rest = Object.fromEntries(
+      Object.entries(dto).filter(
+        ([key]) =>
+          key !== "scheduledAt" &&
+          key !== "publishedAt" &&
+          key !== "publishStatus",
+      ),
+    ) as Omit<typeof dto, "scheduledAt" | "publishedAt" | "publishStatus">;
 
     return {
       ...rest,
@@ -347,12 +355,16 @@ export class BlogPostService extends BaseService<BlogPost> {
     if (relations.productIds) await this.assertProducts(relations.productIds);
 
     const publishStatus = payload.publishStatus ?? existing.publishStatus;
-    const {
-      scheduledAt,
-      publishedAt: publishedAtInput,
-      publishStatus: _ps,
-      ...rest
-    } = payload;
+    const scheduledAt = payload.scheduledAt;
+    const publishedAtInput = payload.publishedAt;
+    const rest = Object.fromEntries(
+      Object.entries(payload).filter(
+        ([key]) =>
+          key !== "scheduledAt" &&
+          key !== "publishedAt" &&
+          key !== "publishStatus",
+      ),
+    ) as Omit<typeof payload, "scheduledAt" | "publishedAt" | "publishStatus">;
 
     const postPayload: Partial<BlogPost> = { ...rest };
 

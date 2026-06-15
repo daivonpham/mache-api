@@ -251,7 +251,17 @@ export class BaseService<Entity extends ObjectLiteral> {
 
     const qb = this.repository.createQueryBuilder("alias");
     const alias = qb.alias;
-    const entityPrototype = (this.repository.target as Function).prototype;
+    const entityTarget = this.repository.target;
+    const entityPrototype: object =
+      typeof entityTarget === "function"
+        ? (entityTarget.prototype as object)
+        : Object.prototype;
+
+    type QueryFilters = Pick<
+      GetAllGenericOptions,
+      "search" | "searchBy" | "sortBy" | "sort" | "fromDate" | "toDate"
+    > &
+      Record<string, unknown>;
 
     const {
       search,
@@ -261,7 +271,7 @@ export class BaseService<Entity extends ObjectLiteral> {
       fromDate,
       toDate,
       ...actualFilters
-    } = options.filter;
+    } = options.filter as QueryFilters;
 
     if (options.relations && options.relations.length > 0) {
       options.relations.forEach((relation) => {
@@ -320,9 +330,9 @@ export class BaseService<Entity extends ObjectLiteral> {
       if (value === null || value === undefined || value === "") return;
 
       if (key === "isDeleted") {
-        if (String(value) === "true") {
+        if (value === true || value === "true") {
           qb.withDeleted().andWhere(`${alias}.deletedAt IS NOT NULL`);
-        } else if (String(value) === "false") {
+        } else if (value === false || value === "false") {
           qb.andWhere(`${alias}.deletedAt IS NULL`);
         }
         return;

@@ -9,6 +9,10 @@ import {
 import { Request, Response } from "express";
 import { ApiResponse } from "../constants/interface";
 
+interface HttpExceptionBody {
+  message?: string | string[];
+}
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
@@ -21,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const exceptionResponse =
+    const exceptionResponse: string | HttpExceptionBody =
       exception instanceof HttpException
         ? exception.getResponse()
         : "Internal server error";
@@ -29,13 +33,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const message =
       typeof exceptionResponse === "string"
         ? exceptionResponse
-        : ((exceptionResponse as any)?.message ?? "Something went wrong");
+        : (exceptionResponse.message ?? "Something went wrong");
 
     const errors =
       typeof exceptionResponse === "object" &&
-      (exceptionResponse as any)?.message &&
-      Array.isArray((exceptionResponse as any).message)
-        ? (exceptionResponse as any).message
+      Array.isArray(exceptionResponse.message)
+        ? exceptionResponse.message
         : undefined;
 
     const body: ApiResponse = {

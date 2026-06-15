@@ -9,7 +9,7 @@ export class AccountService extends BaseService<Account> {
     super(accountRepository);
   }
 
-  async getListAccounts(queryDto: any) {
+  async getListAccounts() {
     return await this.getAllGeneric({
       relations: ["profile"],
 
