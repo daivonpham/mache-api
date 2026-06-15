@@ -10,6 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Auth } from "src/common/decorators/auth.decorator";
 import {
   BlogCategoryQueryDto,
   CreateBlogCategoryDto,
@@ -24,6 +25,7 @@ export class BlogCategoryController {
   constructor(private readonly blogCategoryService: BlogCategoryService) {}
 
   @Post()
+  @Auth()
   @ApiOperation({ summary: "Tạo danh mục blog" })
   async create(
     @Body() dto: CreateBlogCategoryDto,
@@ -52,6 +54,7 @@ export class BlogCategoryController {
   }
 
   @Put(":id")
+  @Auth()
   @ApiOperation({ summary: "Cập nhật danh mục blog" })
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -61,6 +64,7 @@ export class BlogCategoryController {
   }
 
   @Delete(":id")
+  @Auth()
   @ApiOperation({ summary: "Xóa danh mục blog (soft delete)" })
   async delete(
     @Param("id", ParseIntPipe) id: number,

@@ -87,6 +87,12 @@ export class Product extends BaseEntity {
   @Column("boolean", { name: "in_stock", default: true })
   inStock: boolean;
 
+  @Column("int", { name: "view_count", default: 0 })
+  viewCount: number;
+
+  @Column("int", { name: "shopee_click_count", default: 0 })
+  shopeeClickCount: number;
+
   @OneToMany(() => ProductImage, (image) => image.product)
   images?: ProductImage[];
 }

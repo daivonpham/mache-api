@@ -10,6 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Auth } from "src/common/decorators/auth.decorator";
 import {
   CreateReviewCategoryDto,
   ReviewCategoryQueryDto,
@@ -24,6 +25,7 @@ export class ReviewCategoryController {
   constructor(private readonly reviewCategoryService: ReviewCategoryService) {}
 
   @Post()
+  @Auth()
   @ApiOperation({ summary: "Tạo danh mục review" })
   async create(
     @Body() dto: CreateReviewCategoryDto,
@@ -54,6 +56,7 @@ export class ReviewCategoryController {
   }
 
   @Put(":id")
+  @Auth()
   @ApiOperation({ summary: "Cập nhật danh mục review" })
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -63,6 +66,7 @@ export class ReviewCategoryController {
   }
 
   @Delete(":id")
+  @Auth()
   @ApiOperation({ summary: "Xóa danh mục review (soft delete)" })
   async delete(
     @Param("id", ParseIntPipe) id: number,

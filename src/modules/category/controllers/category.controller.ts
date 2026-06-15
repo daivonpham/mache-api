@@ -10,6 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Auth } from "src/common/decorators/auth.decorator";
 import {
   CategoryQueryDto,
   CreateCategoryDto,
@@ -24,6 +25,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @Auth()
   @ApiOperation({ summary: "Tạo danh mục" })
   async create(@Body() dto: CreateCategoryDto): Promise<CategoryResponse> {
     return this.categoryService.create(dto);
@@ -50,6 +52,7 @@ export class CategoryController {
   }
 
   @Put(":id")
+  @Auth()
   @ApiOperation({ summary: "Cập nhật danh mục" })
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -59,6 +62,7 @@ export class CategoryController {
   }
 
   @Delete(":id")
+  @Auth()
   @ApiOperation({ summary: "Xóa danh mục (soft delete)" })
   async delete(
     @Param("id", ParseIntPipe) id: number,

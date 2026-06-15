@@ -10,6 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Auth } from "src/common/decorators/auth.decorator";
 import {
   BrandQueryDto,
   CreateBrandDto,
@@ -24,6 +25,7 @@ export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
   @Post()
+  @Auth()
   @ApiOperation({ summary: "Tạo thương hiệu" })
   async create(@Body() dto: CreateBrandDto): Promise<BrandResponse> {
     return this.brandService.create(dto);
@@ -42,6 +44,7 @@ export class BrandController {
   }
 
   @Put(":id")
+  @Auth()
   @ApiOperation({ summary: "Cập nhật thương hiệu" })
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -51,6 +54,7 @@ export class BrandController {
   }
 
   @Delete(":id")
+  @Auth()
   @ApiOperation({ summary: "Xóa thương hiệu (soft delete)" })
   async delete(
     @Param("id", ParseIntPipe) id: number,

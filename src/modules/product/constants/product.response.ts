@@ -30,6 +30,18 @@ export class ProductResponse {
   thumbnailMediaId?: number | null;
   thumbnailUrl?: string | null;
   gallery: ProductGalleryItemResponse[];
+  viewCount: number;
+  shopeeClickCount: number;
   createdAt: Date;
   updatedAt?: Date;
+}
+
+export class ProductViewCountResponse {
+  id: number;
+  viewCount: number;
+}
+
+export class ProductShopeeClickCountResponse {
+  id: number;
+  shopeeClickCount: number;
 }

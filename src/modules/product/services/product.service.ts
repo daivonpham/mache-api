@@ -20,6 +20,8 @@ import {
 import {
   ProductGalleryItemResponse,
   ProductResponse,
+  ProductShopeeClickCountResponse,
+  ProductViewCountResponse,
 } from "../constants/product.response";
 import { ProductImage } from "../entities/product-image.entity";
 import { Product } from "../entities/product.entity";
@@ -79,6 +81,8 @@ export class ProductService extends BaseService<Product> {
       thumbnailMediaId: product.thumbnailMediaId ?? null,
       thumbnailUrl: product.thumbnailMedia?.url ?? null,
       gallery: this.mapGallery(product.images),
+      viewCount: product.viewCount ?? 0,
+      shopeeClickCount: product.shopeeClickCount ?? 0,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
     };
@@ -299,6 +303,8 @@ export class ProductService extends BaseService<Product> {
         "price",
         "isActive",
         "inStock",
+        "viewCount",
+        "shopeeClickCount",
         "createdAt",
         "updatedAt",
         "images",
@@ -398,6 +404,30 @@ export class ProductService extends BaseService<Product> {
     }
     await this.productRepository.update(id, { isActive: !product.isActive });
     return this.toResponse(await this.findWithGallery(id));
+  }
+
+  async trackView(id: number): Promise<ProductViewCountResponse> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      select: ["id", "viewCount"],
+    });
+    if (!product) {
+      throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+    await this.productRepository.increment({ id }, "viewCount", 1);
+    return { id, viewCount: product.viewCount + 1 };
+  }
+
+  async trackShopeeClick(id: number): Promise<ProductShopeeClickCountResponse> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      select: ["id", "shopeeClickCount"],
+    });
+    if (!product) {
+      throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+    await this.productRepository.increment({ id }, "shopeeClickCount", 1);
+    return { id, shopeeClickCount: product.shopeeClickCount + 1 };
   }
 
   async delete(id: number): Promise<void> {

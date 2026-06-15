@@ -21,9 +21,7 @@ export class SearchQueryDto extends PickType(QueryBaseDto, [
   @IsString()
   @IsNotEmpty()
   @MinLength(1)
-  @Transform(({ value }) =>
-    typeof value === "string" ? value.trim() : value,
-  )
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   search: string;
 
   @ApiPropertyOptional({

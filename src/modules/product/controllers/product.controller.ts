@@ -11,12 +11,17 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Auth } from "src/common/decorators/auth.decorator";
 import {
   CreateProductDto,
   ProductQueryDto,
   UpdateProductDto,
 } from "../constants/product.dto";
-import { ProductResponse } from "../constants/product.response";
+import {
+  ProductResponse,
+  ProductShopeeClickCountResponse,
+  ProductViewCountResponse,
+} from "../constants/product.response";
 import { ProductService } from "../services/product.service";
 
 @Controller("products")
@@ -25,6 +30,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
+  @Auth()
   @ApiOperation({ summary: "Tạo sản phẩm (+ gallery qua galleryMediaIds)" })
   async create(@Body() dto: CreateProductDto): Promise<ProductResponse> {
     return this.productService.create(dto);
@@ -51,6 +57,7 @@ export class ProductController {
   }
 
   @Put(":id")
+  @Auth()
   @ApiOperation({
     summary: "Cập nhật sản phẩm (gửi galleryMediaIds để thay gallery)",
   })
@@ -62,6 +69,7 @@ export class ProductController {
   }
 
   @Patch(":id/toggle-in-stock")
+  @Auth()
   @ApiOperation({
     summary: "Đảo trạng thái tồn kho (inStock true ↔ false)",
   })
@@ -72,6 +80,7 @@ export class ProductController {
   }
 
   @Patch(":id/toggle-active")
+  @Auth()
   @ApiOperation({
     summary: "Đảo trạng thái hiển thị (isActive true ↔ false)",
   })
@@ -81,7 +90,24 @@ export class ProductController {
     return this.productService.toggleIsActive(id);
   }
 
+  @Patch(":id/track-view")
+  @ApiOperation({ summary: "Ghi nhận lượt xem chi tiết sản phẩm (+1)" })
+  async trackView(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<ProductViewCountResponse> {
+    return this.productService.trackView(id);
+  }
+
+  @Patch(":id/track-shopee-click")
+  @ApiOperation({ summary: "Ghi nhận lượt click vào Shopee (+1)" })
+  async trackShopeeClick(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<ProductShopeeClickCountResponse> {
+    return this.productService.trackShopeeClick(id);
+  }
+
   @Delete(":id")
+  @Auth()
   @ApiOperation({ summary: "Xóa sản phẩm (soft delete)" })
   async delete(
     @Param("id", ParseIntPipe) id: number,

@@ -10,6 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Auth } from "src/common/decorators/auth.decorator";
 import {
   BlogTagQueryDto,
   CreateBlogTagDto,
@@ -24,6 +25,7 @@ export class BlogTagController {
   constructor(private readonly blogTagService: BlogTagService) {}
 
   @Post()
+  @Auth()
   @ApiOperation({ summary: "Tạo tag blog" })
   async create(@Body() dto: CreateBlogTagDto): Promise<BlogTagResponse> {
     return this.blogTagService.create(dto);
@@ -44,6 +46,7 @@ export class BlogTagController {
   }
 
   @Put(":id")
+  @Auth()
   @ApiOperation({ summary: "Cập nhật tag blog" })
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -53,6 +56,7 @@ export class BlogTagController {
   }
 
   @Delete(":id")
+  @Auth()
   @ApiOperation({ summary: "Xóa tag blog (soft delete)" })
   async delete(
     @Param("id", ParseIntPipe) id: number,
