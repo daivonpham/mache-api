@@ -31,7 +31,14 @@
     "m:rv": "yarn typeorm migration:revert -d src/database/data-source.ts",
     "m:s": "yarn typeorm migration:show -d src/database/data-source.ts",
     "seed:admin": "ts-node -r tsconfig-paths/register src/database/seeds/seed-admin.ts",
-    "deploy": "yarn build && yarn migration:run:prod && yarn seed:admin"
+    "seed:admin:prod": "node dist/database/seeds/seed-admin.js",
+    "deploy": "yarn build && yarn migration:run:prod && yarn seed:admin",
+
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f api",
+    "docker:seed": "docker compose exec api yarn seed:admin:prod",
+    "docker:dev:db": "docker compose -f docker-compose.dev.yml up -d"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
