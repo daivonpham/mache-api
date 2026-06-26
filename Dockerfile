@@ -6,7 +6,9 @@ WORKDIR /app
 RUN apk add --no-cache python3 make g++
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn config set registry https://registry.npmjs.org \
+  && yarn config set network-timeout 600000 \
+  && yarn install --frozen-lockfile
 
 COPY . .
 RUN yarn build
@@ -18,11 +20,11 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN apk add --no-cache python3 make g++
-
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production \
-  && apk del python3 make g++
+COPY --from=builder /app/node_modules ./node_modules
+RUN yarn config set registry https://registry.npmjs.org \
+  && yarn config set network-timeout 600000 \
+  && yarn install --frozen-lockfile --production --prefer-offline
 
 COPY --from=builder /app/dist ./dist
 
