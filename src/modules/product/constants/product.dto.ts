@@ -222,6 +222,12 @@ export class ProductQueryDto extends PickType(QueryBaseDto, [
   @ToBoolean()
   isDiscount?: boolean;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  isClick?: boolean;
+
   @ApiPropertyOptional({
     enum: ProductPriceSort,
     description: "Sắp xếp theo giá: asc = thấp → cao, desc = cao → thấp",

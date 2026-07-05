@@ -1,5 +1,8 @@
 import { BaseEntity } from "src/common/base/entities/base-entity";
-import { Searchable } from "src/common/decorators/entity-meta.decorator";
+import {
+  Searchable,
+  Sortable,
+} from "src/common/decorators/entity-meta.decorator";
 import { Brand } from "src/modules/brand/entities/brand.entity";
 import { Category } from "src/modules/category/entities/category.entity";
 import { Media } from "src/modules/media/entities/media.entity";
@@ -90,6 +93,7 @@ export class Product extends BaseEntity {
   @Column("int", { name: "view_count", default: 0 })
   viewCount: number;
 
+  @Sortable()
   @Column("int", { name: "shopee_click_count", default: 0 })
   shopeeClickCount: number;
 

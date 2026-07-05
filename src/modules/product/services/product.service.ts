@@ -271,12 +271,17 @@ export class ProductService extends BaseService<Product> {
       page: dto.page,
       limit: dto.limit,
       getAll: true,
-      ...(dto.priceSort
+      ...(dto.isClick
         ? {
-            orderByRaw: `NULLIF(regexp_replace(alias.price, '[^0-9.]', '', 'g'), '')::numeric`,
-            sort: priceOrder,
+            sortBy: "shopeeClickCount",
+            sort: SortOrder.DESC,
           }
-        : {}),
+        : dto.priceSort
+          ? {
+              orderByRaw: `NULLIF(regexp_replace(alias.price, '[^0-9.]', '', 'g'), '')::numeric`,
+              sort: priceOrder,
+            }
+          : {}),
       relations: [
         "thumbnailMedia",
         "images",
