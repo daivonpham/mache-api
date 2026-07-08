@@ -166,16 +166,22 @@ export class AuthService {
     if (!account) {
       throw new UnauthorizedException(ErrorMessage.EMAIL_NOT_CORRECT);
     }
-    const isPasswordValid = dto.password === dto.confirmPassword;
 
-    if (!isPasswordValid) {
+    const isOldPasswordValid = await this.jwtService.comparePassword(
+      dto.oldPassword,
+      account.password,
+    );
+    if (!isOldPasswordValid) {
+      throw new UnauthorizedException(ErrorMessage.PASSWORD_NOT_CORRECT);
+    }
+
+    if (dto.newPassword !== dto.confirmNewPassword) {
       throw new UnauthorizedException(
         ErrorMessage.CONFIRM_PASSWORD_NOT_CORRECT,
       );
     }
-    const hashedPassword = await this.jwtService.hashPassword(
-      dto.confirmPassword,
-    );
+
+    const hashedPassword = await this.jwtService.hashPassword(dto.newPassword);
     await this.databaseService.getRepository(Account).update(account.id, {
       password: hashedPassword,
     });

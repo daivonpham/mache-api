@@ -29,9 +29,23 @@ export class LoginDto {
   password: string;
 }
 
-export class ChangePasswordDto extends LoginDto {
+export class ChangePasswordDto {
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
   @ApiProperty()
   @IsString()
   @MinLength(6)
-  confirmPassword: string;
+  oldPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  @MinLength(6)
+  newPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  @MinLength(6)
+  confirmNewPassword: string;
 }

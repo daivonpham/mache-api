@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -8,7 +9,7 @@ import { BaseService } from "src/common/base/services/base-service";
 import { ErrorMessage } from "src/common/constants/err";
 import { Media, MediaKind } from "src/modules/media/entities/media.entity";
 import { Product } from "src/modules/product/entities/product.entity";
-import { EntityManager, In, Repository } from "typeorm";
+import { EntityManager, In, LessThanOrEqual, Repository } from "typeorm";
 import {
   BlogPostQueryDto,
   CreateBlogPostDto,
@@ -67,6 +68,8 @@ const BLOG_POST_SELECT = [
 
 @Injectable()
 export class BlogPostService extends BaseService<BlogPost> {
+  private readonly logger = new Logger(BlogPostService.name);
+
   constructor(
     @InjectRepository(BlogPost)
     private readonly blogPostRepository: Repository<BlogPost>,
@@ -330,7 +333,63 @@ export class BlogPostService extends BaseService<BlogPost> {
   }
 
   async findBySlug(slug: string) {
-    return this.findPostOrThrow({ slug });
+    const post = await this.blogPostRepository.findOne({
+      where: { slug },
+      relations: {
+        postCategories: { category: true },
+        postTags: { tag: true },
+        postProducts: {
+          product: { thumbnailMedia: true, images: { media: true } },
+        },
+        thumbnailMedia: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        content: true,
+        description: true,
+        seo: true,
+        publishStatus: true,
+        scheduledAt: true,
+        publishedAt: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        postCategories: {
+          blogCategoryId: true,
+          isPrimary: true,
+          category: { id: true, name: true },
+        },
+        postTags: {
+          blogTagId: true,
+          tag: { id: true, name: true },
+        },
+        postProducts: {
+          productId: true,
+          sortOrder: true,
+          product: {
+            id: true,
+            name: true,
+            slug: true,
+            price: true,
+            thumbnailMediaId: true,
+            thumbnailMedia: { url: true },
+            images: {
+              id: true,
+              mediaId: true,
+              sortOrder: true,
+              media: { url: true, alt: true },
+            },
+          },
+        },
+        thumbnailMedia: { url: true },
+      },
+    });
+    if (!post) {
+      throw new NotFoundException(ErrorMessage.BLOG_POST_NOT_FOUND);
+    }
+    return post;
   }
 
   async update(id: number, dto: UpdateBlogPostDto) {
@@ -416,5 +475,36 @@ export class BlogPostService extends BaseService<BlogPost> {
       throw new NotFoundException(ErrorMessage.BLOG_POST_NOT_FOUND);
     }
     await this.blogPostRepository.softDelete(id);
+  }
+
+  async publishDueScheduledPosts(): Promise<number> {
+    const now = new Date();
+    const duePosts = await this.blogPostRepository.find({
+      where: {
+        publishStatus: BlogPublishStatus.SCHEDULED,
+        scheduledAt: LessThanOrEqual(now),
+        isActive: true,
+      },
+      select: ["id", "scheduledAt"],
+    });
+
+    if (!duePosts.length) return 0;
+
+    await this.blogPostRepository.manager.transaction(async (manager) => {
+      for (const post of duePosts) {
+        await manager.update(BlogPost, post.id, {
+          publishStatus: BlogPublishStatus.PUBLISHED,
+          publishedAt: post.scheduledAt ?? now,
+        });
+      }
+    });
+
+    for (const post of duePosts) {
+      this.logger.log(
+        `Published scheduled blog post #${post.id} (scheduledAt=${(post.scheduledAt ?? now).toISOString()})`,
+      );
+    }
+
+    return duePosts.length;
   }
 }

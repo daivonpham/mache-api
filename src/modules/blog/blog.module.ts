@@ -12,6 +12,7 @@ import { BlogPostTag } from "./entities/blog-post-tag.entity";
 import { BlogPost } from "./entities/blog-post.entity";
 import { BlogTag } from "./entities/blog-tag.entity";
 import { BlogCategoryService } from "./services/blog-category.service";
+import { BlogPostSchedulerService } from "./services/blog-post-scheduler.service";
 import { BlogPostService } from "./services/blog-post.service";
 import { BlogTagService } from "./services/blog-tag.service";
 
@@ -29,7 +30,12 @@ import { BlogTagService } from "./services/blog-tag.service";
     ]),
   ],
   controllers: [BlogCategoryController, BlogTagController, BlogPostController],
-  providers: [BlogCategoryService, BlogTagService, BlogPostService],
+  providers: [
+    BlogCategoryService,
+    BlogTagService,
+    BlogPostService,
+    BlogPostSchedulerService,
+  ],
   exports: [BlogCategoryService, BlogTagService, BlogPostService],
 })
 export class BlogModule {}
