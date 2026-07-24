@@ -25,4 +25,10 @@ export default () => ({
   upload: {
     dir: process.env.UPLOAD_DIR || "storages/uploads",
   },
+  siteUrl: (process.env.SITE_URL || "https://www.thegioivandien.com"),
+  sitemap: {
+    pathProduct: process.env.SITEMAP_PATH_PRODUCT || "/products",
+    pathBlog: process.env.SITEMAP_PATH_BLOG || "/tin-tuc",
+    pathReview: process.env.SITEMAP_PATH_REVIEW || "/review-sp",
+  },
 });

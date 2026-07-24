@@ -7,3 +7,4 @@ export * from "@modules/product/product.module";
 export * from "@modules/blog/blog.module";
 export * from "@modules/review/review.module";
 export * from "@modules/search/search.module";
+export * from "@modules/sitemap/sitemap.module";

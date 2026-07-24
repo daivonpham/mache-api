@@ -6,7 +6,6 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { join } from "path";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
-import { ResponseTransformInterceptor } from "./common/interceptors/response-transform.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -45,7 +44,6 @@ async function bootstrap() {
   });
 
   app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalInterceptors(new ResponseTransformInterceptor());
 
   app.useGlobalPipes(
     new ValidationPipe({
