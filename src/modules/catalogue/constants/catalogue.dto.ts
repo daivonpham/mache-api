@@ -69,12 +69,27 @@ export class CreateCatalogueDto {
   @MaxLength(255)
   slug: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
-  @ApiProperty() @IsInt() @Min(1) @ToNumber() categoryId: number;
+  /** Bản nháp chỉ cần tên + slug; danh mục / PDF / ảnh bìa bắt buộc khi xuất bản (kiểm tra ở service) */
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  isDraft?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsInt() @Min(1) @ToNumber() categoryId?:
+    | number
+    | null;
   @ApiPropertyOptional() @IsOptional() @IsInt() @Min(1) @ToNumber() brandId?:
     | number
     | null;
-  @ApiProperty() @IsInt() @Min(1) @ToNumber() pdfMediaId: number;
-  @ApiProperty() @IsInt() @Min(1) @ToNumber() thumbnailMediaId: number;
+  @ApiPropertyOptional() @IsOptional() @IsInt() @Min(1) @ToNumber() pdfMediaId?:
+    | number
+    | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @ToNumber()
+  thumbnailMediaId?: number | null;
   @ApiPropertyOptional({ type: CatalogueSeoDto })
   @IsOptional()
   @ValidateNested()
@@ -99,6 +114,11 @@ export class CatalogueQueryDto extends PickType(QueryBaseDto, [
   @IsBoolean()
   @ToBoolean()
   isActive?: boolean;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  isDraft?: boolean;
   @ApiPropertyOptional({ enum: ["newest", "oldest", "title"] })
   @IsOptional()
   @IsString()

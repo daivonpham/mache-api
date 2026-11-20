@@ -20,12 +20,16 @@ export class Catalogue extends BaseEntity {
   @Column("text", { nullable: true })
   description?: string;
 
-  @Column("int", { name: "category_id" })
-  categoryId: number;
+  /** Bản nháp: chưa đủ thông tin, không hiển thị ngoài website (index tạo trong migration) */
+  @Column("boolean", { name: "is_draft", default: false })
+  isDraft: boolean;
 
-  @ManyToOne(() => CatalogueCategory, { onDelete: "RESTRICT" })
+  @Column("int", { name: "category_id", nullable: true })
+  categoryId?: number | null;
+
+  @ManyToOne(() => CatalogueCategory, { nullable: true, onDelete: "RESTRICT" })
   @JoinColumn({ name: "category_id" })
-  category: CatalogueCategory;
+  category?: CatalogueCategory | null;
 
   @Column("int", { name: "brand_id", nullable: true })
   brandId?: number | null;
@@ -34,19 +38,19 @@ export class Catalogue extends BaseEntity {
   @JoinColumn({ name: "brand_id" })
   brand?: Brand | null;
 
-  @Column("int", { name: "pdf_media_id" })
-  pdfMediaId: number;
+  @Column("int", { name: "pdf_media_id", nullable: true })
+  pdfMediaId?: number | null;
 
-  @ManyToOne(() => Media, { onDelete: "RESTRICT" })
+  @ManyToOne(() => Media, { nullable: true, onDelete: "RESTRICT" })
   @JoinColumn({ name: "pdf_media_id" })
-  pdfMedia: Media;
+  pdfMedia?: Media | null;
 
-  @Column("int", { name: "thumbnail_media_id" })
-  thumbnailMediaId: number;
+  @Column("int", { name: "thumbnail_media_id", nullable: true })
+  thumbnailMediaId?: number | null;
 
-  @ManyToOne(() => Media, { onDelete: "RESTRICT" })
+  @ManyToOne(() => Media, { nullable: true, onDelete: "RESTRICT" })
   @JoinColumn({ name: "thumbnail_media_id" })
-  thumbnailMedia: Media;
+  thumbnailMedia?: Media | null;
 
   @Column("json", { nullable: true })
   seo?: {

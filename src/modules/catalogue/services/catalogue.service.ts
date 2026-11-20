@@ -45,14 +45,15 @@ export class CatalogueService extends BaseService<Catalogue> {
       title: item.title,
       slug: item.slug,
       description: item.description,
-      categoryId: item.categoryId,
-      categoryName: item.category?.name,
+      isDraft: item.isDraft,
+      categoryId: item.categoryId ?? null,
+      categoryName: item.category?.name ?? null,
       brandId: item.brandId ?? null,
       brandName: item.brand?.name ?? null,
-      pdfMediaId: item.pdfMediaId,
-      pdfUrl: item.pdfMedia?.url,
-      thumbnailMediaId: item.thumbnailMediaId,
-      thumbnailUrl: item.thumbnailMedia?.url,
+      pdfMediaId: item.pdfMediaId ?? null,
+      pdfUrl: item.pdfMedia?.url ?? null,
+      thumbnailMediaId: item.thumbnailMediaId ?? null,
+      thumbnailUrl: item.thumbnailMedia?.url ?? null,
       seo: item.seo ?? null,
       isActive: item.isActive,
       createdAt: item.createdAt,
@@ -70,7 +71,7 @@ export class CatalogueService extends BaseService<Catalogue> {
         throw new BadRequestException("Slug catalogue đã tồn tại");
     }
     if (
-      dto.categoryId !== undefined &&
+      dto.categoryId != null &&
       !(await this.categories.findOne({ where: { id: dto.categoryId } }))
     )
       throw new BadRequestException("Danh mục catalogue không tồn tại");
@@ -84,7 +85,7 @@ export class CatalogueService extends BaseService<Catalogue> {
       ["thumbnailMediaId", MediaKind.IMAGE, null],
     ] as const) {
       const mediaId = dto[key];
-      if (mediaId === undefined) continue;
+      if (mediaId == null) continue;
       const file = await this.media.findOne({ where: { id: mediaId } });
       if (!file || file.kind !== kind || (mime && file.mimeType !== mime))
         throw new BadRequestException(
@@ -95,14 +96,47 @@ export class CatalogueService extends BaseService<Catalogue> {
     }
   }
 
+  /** Xuất bản (không phải nháp) thì bắt buộc đủ danh mục, file PDF và ảnh bìa */
+  private assertPublishable(data: {
+    isDraft?: boolean;
+    categoryId?: number | null;
+    pdfMediaId?: number | null;
+    thumbnailMediaId?: number | null;
+  }) {
+    if (data.isDraft) return;
+    const missing = [
+      !data.categoryId && "danh mục",
+      !data.pdfMediaId && "file PDF",
+      !data.thumbnailMediaId && "ảnh bìa",
+    ].filter(Boolean);
+    if (missing.length)
+      throw new BadRequestException(
+        `Cần có ${missing.join(", ")} để xuất bản catalogue`,
+      );
+  }
+
   async create(dto: CreateCatalogueDto) {
     await this.validate(dto);
-    const saved = await this.catalogues.save(this.catalogues.create(dto));
+    this.assertPublishable(dto);
+    const saved = await this.catalogues.save(
+      this.catalogues.create({ ...dto, isDraft: dto.isDraft ?? false }),
+    );
     return this.findOne(saved.id);
   }
   async update(id: number, dto: UpdateCatalogueDto) {
-    await this.findOne(id);
+    const current = await this.findOne(id);
     await this.validate(dto, id);
+    this.assertPublishable({
+      isDraft: dto.isDraft ?? current.isDraft,
+      categoryId:
+        dto.categoryId !== undefined ? dto.categoryId : current.categoryId,
+      pdfMediaId:
+        dto.pdfMediaId !== undefined ? dto.pdfMediaId : current.pdfMediaId,
+      thumbnailMediaId:
+        dto.thumbnailMediaId !== undefined
+          ? dto.thumbnailMediaId
+          : current.thumbnailMediaId,
+    });
     await this.catalogues.update(id, dto);
     return this.findOne(id);
   }
@@ -116,7 +150,7 @@ export class CatalogueService extends BaseService<Catalogue> {
   }
   async findBySlug(slug: string) {
     const item = await this.catalogues.findOne({
-      where: { slug, isActive: true },
+      where: { slug, isActive: true, isDraft: false },
       relations: this.relations,
     });
     // Trang public: danh mục bị ẩn thì catalogue cũng không hiển thị
@@ -147,11 +181,14 @@ export class CatalogueService extends BaseService<Catalogue> {
       qb.andWhere("catalogue.brandId = :brandId", { brandId: dto.brandId });
     if (dto.isActive !== undefined)
       qb.andWhere("catalogue.isActive = :isActive", { isActive: dto.isActive });
-    // Trang public chỉ hiển thị catalogue thuộc danh mục đang bật
+    if (dto.isDraft !== undefined)
+      qb.andWhere("catalogue.isDraft = :isDraft", { isDraft: dto.isDraft });
+    // Trang public: bỏ bản nháp và catalogue thuộc danh mục đang ẩn
     if (dto.isActive === true)
-      qb.andWhere("category.isActive = :categoryActive", {
-        categoryActive: true,
-      });
+      qb.andWhere("catalogue.isDraft = false").andWhere(
+        "category.isActive = :categoryActive",
+        { categoryActive: true },
+      );
     if (dto.sort === "title") qb.orderBy("catalogue.title", "ASC");
     else
       qb.orderBy("catalogue.updatedAt", dto.sort === "oldest" ? "ASC" : "DESC");
@@ -172,12 +209,19 @@ export class CatalogueService extends BaseService<Catalogue> {
   }
 
   async stats() {
-    const [total, active, categories] = await Promise.all([
+    const [total, active, drafts, categories] = await Promise.all([
       this.catalogues.count(),
-      this.catalogues.count({ where: { isActive: true } }),
+      this.catalogues.count({ where: { isActive: true, isDraft: false } }),
+      this.catalogues.count({ where: { isDraft: true } }),
       this.categories.count(),
     ]);
-    return { total, active, inactive: total - active, categories };
+    return {
+      total,
+      active,
+      inactive: total - active - drafts,
+      drafts,
+      categories,
+    };
   }
 
   async categoriesAll(dto: CatalogueCategoryQueryDto = {}) {
