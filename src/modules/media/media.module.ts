@@ -11,7 +11,8 @@ import { StorageService } from "./services/storage.service";
     TypeOrmModule.forFeature([Media]),
     MulterModule.register({
       limits: {
-        fileSize: 10 * 1024 * 1024,
+        // Giới hạn cứng của multer = giới hạn lớn nhất (PDF 50MB); ảnh được kiểm tra riêng trong StorageService
+        fileSize: 50 * 1024 * 1024,
       },
     }),
   ],

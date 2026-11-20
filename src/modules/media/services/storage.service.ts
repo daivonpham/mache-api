@@ -23,7 +23,8 @@ export class StorageService {
     return this.configService.get<UploadConfig>("upload")!;
   }
 
-  private readonly maxSize = 10 * 1024 * 1024; // 10MB
+  private readonly maxImageSize = 10 * 1024 * 1024; // 10MB
+  private readonly maxDocumentSize = 50 * 1024 * 1024; // 50MB (PDF catalogue)
   private readonly allowedMime = new Set([
     "image/jpeg",
     "image/png",
@@ -41,7 +42,10 @@ export class StorageService {
       throw new BadRequestException(ErrorMessage.FILE_REQUIRED);
     }
 
-    if (file.size > this.maxSize) {
+    const maxSize = file.mimetype.startsWith("image/")
+      ? this.maxImageSize
+      : this.maxDocumentSize;
+    if (file.size > maxSize) {
       throw new PayloadTooLargeException(ErrorMessage.FILE_TOO_LARGE);
     }
 

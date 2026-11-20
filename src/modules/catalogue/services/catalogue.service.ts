@@ -119,7 +119,10 @@ export class CatalogueService extends BaseService<Catalogue> {
       where: { slug, isActive: true },
       relations: this.relations,
     });
-    if (!item) throw new NotFoundException("Catalogue không tồn tại");
+    // Trang public: danh mục bị ẩn thì catalogue cũng không hiển thị
+    if (!item || !item.category?.isActive) {
+      throw new NotFoundException("Catalogue không tồn tại");
+    }
     return this.map(item);
   }
   async findAll(dto: CatalogueQueryDto) {
